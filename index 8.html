@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explora las Herramientas Multimedia</title>
+    <style>
+        :root {
+            --primary: #6a11cb;
+            --secondary: #2575fc;
+            --accent: #ff3e9d;
+            --light: #f8f9fa;
+            --dark: #212529;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, var(--light), #e0e0e0);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-top: 10px;
+        }
+        
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+        
+        .topic-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .topic-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        
+        .topic-image {
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .topic-content {
+            padding: 20px;
+        }
+        
+        .topic-title {
+            font-size: 1.5rem;
+            margin: 0 0 10px 0;
+            color: var(--primary);
+        }
+        
+        .topic-desc {
+            color: #555;
+            margin-bottom: 15px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(106, 17, 203, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(106, 17, 203, 0.4);
+            background: linear-gradient(to right, #5a0db5, #1c68e8);
+        }
+        
+        .btn-back {
+            background: #6c757d;
+            margin-top: 20px;
+            display: inline-block;
+        }
+        
+        .btn-back:hover {
+            background: #5a6268;
+        }
+        
+        .topic-detail {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            margin: 30px 0;
+            display: none;
+            position: relative;
+        }
+        
+        .topic-detail h2 {
+            color: var(--primary);
+            font-size: 2rem;
+            margin-top: 0;
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 10px;
+        }
+        
+        .topic-detail p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        
+        footer {
+            background: linear-gradient(to right, var(--dark), #343a40);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 50px;
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin: 15px;
+        }
+        
+        .footer-section h3 {
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+        
+        .social-icons a {
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 10px;
+            transition: color 0.3s;
+        }
+        
+        .social-icons a:hover {
+            color: var(--accent);
+        }
+        
+        .copyright {
+            margin-top: 30px;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+        
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .topic-card {
+            animation: fadeIn 0.5s ease-out forwards;
+            opacity: 0;
+        }
+        
+        .topic-card:nth-child(1) { animation-delay: 0.1s; }
+        .topic-card:nth-child(2) { animation-delay: 0.2s; }
+        .topic-card:nth-child(3) { animation-delay: 0.3s; }
+        .topic-card:nth-child(4) { animation-delay: 0.4s; }
+        .topic-card:nth-child(5) { animation-delay: 0.5s; }
+        .topic-card:nth-child(6) { animation-delay: 0.6s; }
+        .topic-card:nth-child(7) { animation-delay: 0.7s; }
+        .topic-card:nth-child(8) { animation-delay: 0.8s; }
+        .topic-card:nth-child(9) { animation-delay: 0.9s; }
+        .topic-card:nth-child(10) { animation-delay: 1.0s; }
+        .topic-card:nth-child(11) { animation-delay: 1.1s; }
+        .topic-card:nth-child(12) { animation-delay: 1.2s; }
+        .topic-card:nth-child(13) { animation-delay: 1.3s; }
+        .topic-card:nth-child(14) { animation-delay: 1.4s; }
+        .topic-card:nth-child(15) { animation-delay: 1.5s; }
+        .topic-card:nth-child(16) { animation-delay: 1.6s; }
+        .topic-card:nth-child(17) { animation-delay: 1.7s; }
+        .topic-card:nth-child(18) { animation-delay: 1.8s; }
+        .topic-card:nth-child(19) { animation-delay: 1.9s; }
+        .topic-card:nth-child(20) { animation-delay: 2.0s; }
+
+        /* Botón de regresar */
+        .back-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #f8f9fa;
+            color: #495057;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .back-button:hover {
+            background: #e9ecef;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Herramientas Multimedia</h1>
+            <p class="subtitle">Explora las tecnologías que dan vida a la creatividad digital</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div id="main-content">
+            <div class="topics-grid">
+                <div class="topic-card" onclick="showDetail('dibujo')">
+                    <div class="topic-image" style="background-image: url('https://images.unsplash.com/photo-1579965342575-16428a7c8881?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+                    <div class="topic-content">
+                        <h3 class="topic-title">Dibujo y Pintura Digital</h3>
+                        <p class="topic-desc">Descubre las herramientas y técnicas para crear arte digital profesional.</p>
+                        <button class="btn">Explorar</button>
+                    </div>
+                </div>
+                
+                <div class="topic-card" onclick="showDetail('mapas-bits')">
+                    <div class="topic-image" style="background-image: url('https://images.unsplash.com/photo-1555099962-4199c345e5dd?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+                    <div class="topic-content">
+                        <h3 class="topic-title">Mapas de Bits</h3>
+                        <p class="topic-desc">Aprende sobre imágenes rasterizadas y su uso en diseño digital.</p>
+                        <button class="btn">Explorar</button>
+                    </div>
+                </div>
+                
+                <div class="topic-card" onclick="showDetail('dibujo-vectorial')">
+                    <div class="topic-image" style="background-image: url('https://images.unsplash.com/photo-1639762681057-408e52192e55?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+                    <div class="topic-content">
+                        <h3 class="topic-title">Dibujo Vectorial</h3>
+                        <p class="topic-desc">Explora gráficos escalables basados en ecuaciones matemáticas.</p>
+                        <button class="btn">Explorar</button>
+                    </div>
+                </div>
+                
+                <div class="topic-card" onclick="showDetail('formatos-imagen')">
+                    <div class="topic-image" style="background-image: url('https://images.unsplash.com/photo-1555774698-0b77e0d5fac6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+                    <div class="topic-content">
+                        <h3 class="topic-title">Formatos de Imágenes</h3>
+                        <p class="topic-desc">Conoce los diferentes formatos y cuándo usar cada uno.</p>
+                        <button class="btn">Explorar</button>
+                    </div>
+                </div>
+                
+                <div class="topic-card" onclick="showDetail('animacion-2d')">
+                    <div class="topic-image" style="background-image: url('https://images.unsplash.com/photo-1626785774573-4b799315345d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+                    <div class="topic-content">
+                        <h3 class="topic-title">Animación 2D</h3>
+                        <p class="topic-desc">Técnicas tradicionales y digitales para crear movimiento en dos dimensiones.</p>
+                        <button class="btn">Explorar</button>
+                    </div>
+                </div>
+                
+                <div class="topic-card" onclick="showDetail('preproduccion')">
+                    <div class="topic-image" style="background-image: url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+                    <div class="topic-content">
+                        <h3 class="topic-title">Preproducción</h3>
+                        <p class="topic-desc">Planificación y preparación de proyectos multimedia.</p>
+                        <button class="btn">Explorar</button>
+                    </div>
+                </div>
+                
+                <div class="topic-card" onclick="showDetail('produccion')">
+                    <div class="topic-image" style="background-image: url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+                    <div class="topic-content">
+                        <h3 class="topic-title">Producción</h3>
+                        <p class="topic-desc">Etapa de creación activa en proyectos multimedia.</p>
+                        <button class="btn">Explorar</button>
+                    </div>
+                </div>
+                
+                <div class="topic-card" onclick="showDetail('postproduccion')">
+                    <div class="topic-image" style="background-image: url('https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+                    <div class="topic-content">
+                        <h3 class="topic-title">Postproducción</h3>
+                        <p class="topic-desc">Edición y finalización de proyectos multimedia.</p>
+                        <button class="btn">Explorar</button>
+                    </div>
+                </div>
+                
+                <div class="topic-card" onclick="showDetail('animacion-3d')">
+                    <div class="topic-image" style="background-image: url('https://images.unsplash.com/photo-1633613286848-e6f43bbafb8d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+                    <div class="topic-content">
+                        <h3 class="topic-title">Animación 3D</h3>
+                        <p class="topic-desc">Creación de objetos y personajes en tres dimensiones.</p>
+                        <button class="btn">Explorar</button>
+                    </div>
+                </div>
+                
+                <div class="topic-card" onclick="showDetail('proceso-animacion-3d')">
+                    <div class="topic-image" style="background-image: url('https://images.unsplash.com/photo-1639762681057-408e52192e55?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+                    <div class="topic-content">
+                        <h3 class="topic-title">Proceso de Animación 3D</h3>
+                        <p class="topic-desc">Flujo de trabajo completo para crear animaciones 3D.</p>
+                        <button class="btn">Explorar</button>
+                    </div>
+                </div>
+                
+                <div class="topic-card" onclick="showDetail('modelado')">
+                    <div class="topic-image" style="background-image: url('https://images.unsplash.com/photo-1633613286848-e6f43bbafb8d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+                    <div class="topic-content">
+                        <h3 class="topic-title">Modelado 3D</h3>
+                        <p class="topic-desc">Creación de mallas y estructuras tridimensionales.</p>
+                        <button class="btn">Explorar</button>
+                    </div>
+                </div>
+                
+                <div class="topic-card" onclick="showDetail('composicion-escena')">
+                    <div class="topic-image" style="background-image: url('https://images.unsplash.com/photo-1633613286848-e6f43bbafb8d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+                    <div class="topic-content">
+                        <h3 class="topic-title">Composición de Escena</h3>
+                        <p class="topic-desc">Organización y preparación de elementos en un entorno 3D.</p>
+                        <button class="btn">Explorar</button>
+                    </div>
+                </div>
+                
+                <div class="topic-card" onclick="showDetail('tecnicas-animacion-3d')">
+                    <div class="topic-image" style="background-image: url('https://images.unsplash.com/photo-1633613286848-e6f43bbafb8d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+                    <div class="topic-content">
+                        <h3 class="topic-title">Técnicas de Animación 3D</h3>
+                        <p class="topic-desc">Métodos avanzados para dar vida a modelos 3D.</p>
+                        <button class="btn">Explorar</button>
+                    </div>
+                </div>
+                
+                <div class="topic-card" onclick="showDetail('motion-design')">
+                    <div class="topic-image" style="background-image: url('https://images.unsplash.com/photo-1633613286848-e6f43bbafb8d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+                    <div class="topic-content">
+                        <h3 class="topic-title">Motion Design</h3>
+                        <p class="topic-desc">Diseño de movimiento para gráficos animados.</p>
+                        <button class="btn">Explorar</button>
+                    </div>
+                </div>
+                
+                <div class="topic-card" onclick="showDetail('stop-motion')">
+                    <div class="topic-image" style="background-image: url('https://images.unsplash.com/photo-1633613286848-e6f43bbafb8d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+                    <div class="topic-content">
+                        <h3 class="topic-title">Stop Motion</h3>
+                        <p class="topic-desc">Técnica de animación fotograma a fotograma.</p>
+                        <button class="btn">Explorar</button>
+                    </div>
+                </div>
+                
+                <div class="topic-card" onclick="showDetail('hiperrealista')">
+                    <div class="topic-image" style="background-image: url('https://images.unsplash.com/photo-1633613286848-e6f43bbafb8d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+                    <div class="topic-content">
+                        <h3 class="topic-title">Técnicas Hiperrealistas</h3>
+                        <p class="topic-desc">Creación de animaciones que imitan la realidad.</p>
+                        <button class="btn">Explorar</button>
+                    </div>
+                </div>
+                
+                <div class="topic-card" onclick="showDetail('caricatura')">
+                    <div class="topic-image" style="background-image: url('https://images.unsplash.com/photo-1633613286848-e6f43bbafb8d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+                    <div class="topic-content">
+                        <h3 class="topic-title">Técnicas de Caricatura</h3>
+                        <p class="topic-desc">Estilo exagerado para animaciones expresivas.</p>
+                        <button class="btn">Explorar</button>
+                    </div>
+                </div>
+                
+                <div class="topic-card" onclick="showDetail('edicion-foto')">
+                    <div class="topic-image" style="background-image: url('https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+                    <div class="topic-content">
+                        <h3 class="topic-title">Edición de Fotografía</h3>
+                        <p class="topic-desc">Técnicas profesionales para mejorar imágenes.</p>
+                        <button class="btn">Explorar</button>
+                    </div>
+                </div>
+                
+                <div class="topic-card" onclick="showDetail('trabajo-capas')">
+                    <div class="topic-image" style="background-image: url('https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+                    <div class="topic-content">
+                        <h3 class="topic-title">Trabajo por Capas</h3>
+                        <p class="topic-desc">Organización y edición no destructiva con capas.</p>
+                        <button class="btn">Explorar</button>
+                    </div>
+                </div>
+                
+                <div class="topic-card" onclick="showDetail('edicion-video')">
+                    <div class="topic-image" style="background-image: url('https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+                    <div class="topic-content">
+                        <h3 class="topic-title">Edición de Video No Lineal</h3>
+                        <p class="topic-desc">Técnicas avanzadas de edición de video digital.</p>
+                        <button class="btn">Explorar</button>
+                    </div>
+                </div>
+                
+                <div class="topic-card" onclick="showDetail('software-edicion')">
+                    <div class="topic-image" style="background-image: url('https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+                    <div class="topic-content">
+                        <h3 class="topic-title">Software de Edición</h3>
+                        <p class="topic-desc">Herramientas profesionales para gráficos y sonido.</p>
+                        <button class="btn">Explorar</button>
+                    </div>
+                </div>
+                
+                <div class="topic-card" onclick="showDetail('premiere-pro')">
+                    <div class="topic-image" style="background-image: url('https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+                    <div class="topic-content">
+                        <h3 class="topic-title">Adobe Premiere Pro</h3>
+                        <p class="topic-desc">Edición profesional de video y producción.</p>
+                        <button class="btn">Explorar</button>
+                    </div>
+                </div>
+                
+                <div class="topic-card" onclick="showDetail('audacity')">
+                    <div class="topic-image" style="background-image: url('https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+                    <div class="topic-content">
+                        <h3 class="topic-title">Audacity</h3>
+                        <p class="topic-desc">Software libre para edición de audio.</p>
+                        <button class="btn">Explorar</button>
+                    </div>
+                </div>
+                
+                <div class="topic-card" onclick="showDetail('audition')">
+                    <div class="topic-image" style="background-image: url('https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');"></div>
+                    <div class="topic-content">
+                        <h3 class="topic-title">Adobe Audition</h3>
+                        <p class="topic-desc">Estación de trabajo profesional de audio.</p>
+                        <button class="btn">Explorar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Detalle de temas originales -->
+        <div id="dibujo-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Dibujo y Pintura Digital</h2>
+            <p>El dibujo y pintura digital ha revolucionado el mundo del arte, permitiendo a los artistas crear obras impresionantes con herramientas tecnológicas. Programas como Adobe Photoshop, Corel Painter y Procreate ofrecen pinceles digitales que simulan técnicas tradicionales como óleo, acuarela y carboncillo.</p>
+            <p>Las tabletas gráficas con sensibilidad a la presión permiten un control preciso sobre el trazo, haciendo que la experiencia sea muy similar al dibujo tradicional pero con las ventajas de lo digital: capas, deshacer ilimitado y una gama infinita de colores.</p>
+            <p>Entre las técnicas más populares están el matte painting para fondos cinematográficos, el concept art para videojuegos y el ilustración digital para libros y revistas.</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+        
+        <div id="mapas-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Mapas de Sitios</h2>
+            <p>Los mapas de sitios son herramientas esenciales en el diseño web y multimedia, ya que permiten visualizar la estructura completa de un proyecto antes de comenzar su desarrollo. Funcionan como un diagrama que muestra todas las páginas o secciones y cómo se relacionan entre sí.</p>
+            <p>Existen dos tipos principales: mapas XML para motores de búsqueda y mapas HTML para usuarios. Herramientas como Slickplan, FlowMapp y MindMeister ayudan a crear estos diagramas de manera profesional.</p>
+            <p>Un buen mapa de sitio considera la jerarquía de la información, la navegación intuitiva y la experiencia del usuario, asegurando que el contenido sea accesible y bien organizado.</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+        
+        <div id="animacion-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Animación 2D y 3D</h2>
+            <p>La animación digital ha evolucionado enormemente, desde los clásicos dibujos animados en 2D hasta los impresionantes mundos en 3D de las películas actuales. En 2D, programas como Adobe Animate y Toon Boom permiten crear animaciones tradicionales frame by frame o mediante interpolación.</p>
+            <p>El 3D involucra modelado, texturizado, rigging, animación e iluminación. Software como Maya, Blender (gratuito) y Cinema 4D son estándares en la industria. Las técnicas incluyen keyframing, motion capture y simulación física.</p>
+            <p>La realidad virtual y aumentada están llevando la animación 3D a nuevos niveles de inmersión, creando experiencias interactivas nunca antes posibles.</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+        
+        <div id="produccion-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Procesos de Producción</h2>
+            <p>La producción multimedia sigue un flujo de trabajo estructurado para garantizar resultados profesionales. Comienza con la preproducción: conceptualización, guión, storyboard y planificación. Esta fase es crucial y puede determinar el éxito del proyecto.</p>
+            <p>La producción es la etapa de creación activa: grabación, captura, modelado o ilustración según el medio. Finalmente, la postproducción incluye edición, efectos, mezcla y masterización.</p>
+            <p>Metodologías como Agile y herramientas de gestión como Trello o Asana ayudan a coordinar equipos multidisciplinarios, manteniendo el proyecto en tiempo y presupuesto.</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+        
+        <div id="tecnicas-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Técnicas de Animación</h2>
+            <p>Los animadores cuentan con un arsenal de técnicas para dar vida a sus creaciones. Los 12 principios de animación establecidos por Disney siguen siendo fundamentales: squash and stretch, anticipación, staging, straight ahead vs pose to pose, follow through, slow in/slow out, arcos, acción secundaria, timing, exageración, dibujo sólido y atractivo.</p>
+            <p>En 3D, técnicas como el rigging (esqueleto digital), skinning (asignación de movimientos), morphing (transformaciones suaves) y particle systems (para efectos como fuego o agua) son esenciales.</p>
+            <p>Nuevas técnicas como la animación procedural (generada por algoritmos) y la IA están expandiendo las posibilidades creativas.</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+        
+        <div id="edicion-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Edición de Video y Sonido</h2>
+            <p>La edición profesional transforma material crudo en productos pulidos. Para video, programas como Adobe Premiere, Final Cut Pro y DaVinci Resolve permiten cortar, organizar y mejorar secuencias, añadir transiciones, efectos y corrección de color.</p>
+            <p>En sonido, herramientas como Pro Tools, Audacity (gratuito) y Adobe Audition sirven para limpiar audio, mezclar pistas, añadir efectos y música. Técnicas como el Foley (efectos sonoros), ADR (doblaje) y mastering son clave para producciones profesionales.</p>
+            <p>El workflow moderno incluye edición multicámara, colaboración en la nube y exportación para múltiples plataformas (cine, TV, web, móviles).</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+        
+        <!-- Detalle de nuevos temas -->
+        <div id="mapas-bits-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Mapas de Bits</h2>
+            <p>Los mapas de bits, también conocidos como imágenes rasterizadas, están compuestos por una cuadrícula de píxeles donde cada uno almacena información de color. Son ideales para fotografías y gráficos complejos con gradientes de color.</p>
+            <p>La calidad de una imagen rasterizada depende de su resolución (cantidad de píxeles por pulgada). Al ampliarlas demasiado, pierden calidad y se ven pixeladas. Formatos comunes incluyen JPEG, PNG, GIF y TIFF.</p>
+            <p>Programas como Adobe Photoshop y GIMP son especializados en la edición de imágenes de mapa de bits, permitiendo ajustes de color, retoque fotográfico y composición avanzada.</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+        
+        <div id="dibujo-vectorial-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Dibujo Vectorial</h2>
+            <p>Los gráficos vectoriales utilizan ecuaciones matemáticas para definir formas, lo que permite escalarlos a cualquier tamaño sin perder calidad. Son ideales para logotipos, iconos e ilustraciones con áreas de color plano.</p>
+            <p>A diferencia de los mapas de bits, los vectores no están compuestos por píxeles sino por puntos, líneas y curvas. Formatos comunes incluyen SVG, AI, EPS y PDF.</p>
+            <p>Adobe Illustrator, CorelDRAW y Inkscape (gratuito) son los principales programas para crear y editar gráficos vectoriales, ofreciendo herramientas precisas para diseño de formas y tipografía.</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+        
+        <div id="formatos-imagen-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Formatos de Imágenes</h2>
+            <p>Los formatos de imagen varían según su compresión, transparencia, animación y otros factores. JPEG es ideal para fotografías, PNG para gráficos con transparencia, GIF para animaciones simples y TIFF para impresión profesional.</p>
+            <p>Formatos modernos como WebP y AVIF ofrecen mejor compresión que JPEG y PNG, reduciendo el tamaño de archivo sin perder calidad visible, lo que es crucial para el rendimiento web.</p>
+            <p>La elección del formato adecuado depende del uso final: web, impresión, edición profesional o almacenamiento. Cada formato tiene sus ventajas y limitaciones en términos de calidad, tamaño y compatibilidad.</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+        
+        <div id="animacion-2d-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Animación 2D</h2>
+            <p>La animación 2D tradicional se crea dibujando cada fotograma a mano, mientras que la digital utiliza técnicas como interpolación de movimiento y rigging de personajes para agilizar el proceso. Programas como Adobe Animate, Toon Boom Harmony y OpenToonz permiten crear animaciones fluidas.</p>
+            <p>Estilos populares incluyen el anime japonés, los cartoons occidentales y el motion graphics. Las técnicas varían desde el frame-by-frame hasta el cut-out animation que utiliza partes pre-dibujadas.</p>
+            <p>La animación 2D sigue siendo muy popular en series de TV, publicidad y contenido para redes sociales por su estilo distintivo y costos relativamente menores comparado con el 3D.</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+        
+        <div id="preproduccion-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Preproducción</h2>
+            <p>La preproducción es la fase de planificación donde se define el concepto, estilo y estructura del proyecto multimedia. Incluye creación de guiones, storyboards, animatics y diseño de personajes y escenarios.</p>
+            <p>Un buen proceso de preproducción ahorra tiempo y recursos durante la producción, ya que permite identificar y resolver problemas potenciales antes de comenzar el trabajo intensivo.</p>
+            <p>Herramientas como Adobe Story para guiones, Photoshop para diseños conceptuales y Blender para previsualización 3D son comúnmente utilizadas en esta etapa creativa.</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+        
+        <div id="postproduccion-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Postproducción</h2>
+            <p>La postproducción es donde se ensamblan, editan y mejoran todos los elementos creados durante la producción. Incluye edición de video, corrección de color, efectos visuales, mezcla de audio y creación de títulos y créditos.</p>
+            <p>Técnicas avanzadas como composición digital (combinar múltiples elementos), rotoscopia (aislar objetos) y match moving (integrar gráficos con video real) son esenciales para producciones profesionales.</p>
+            <p>Adobe After Effects para efectos visuales, DaVinci Resolve para corrección de color y Pro Tools para mezcla de audio son estándares en la industria para esta etapa final.</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+        
+        <div id="animacion-3d-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Animación 3D</h2>
+            <p>La animación 3D crea la ilusión de movimiento en objetos tridimensionales digitales. Requiere modelado 3D, texturizado, rigging (crear esqueletos digitales), animación, iluminación y renderizado.</p>
+            <p>Industrias como el cine, videojuegos, arquitectura y publicidad utilizan ampliamente la animación 3D. Películas de Pixar y efectos visuales en Marvel son ejemplos destacados.</p>
+            <p>Blender (gratuito), Autodesk Maya y Cinema 4D son algunos de los programas más utilizados, cada uno con herramientas especializadas para diferentes aspectos del pipeline 3D.</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+        
+        <div id="proceso-animacion-3d-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Proceso de Animación 3D</h2>
+            <p>El flujo de trabajo típico en animación 3D comienza con concept art y storyboards, seguido de modelado 3D de personajes y escenarios. Luego viene el texturizado (dar color y superficie), rigging (crear controles para animar) y animación propiamente dicha.</p>
+            <p>La iluminación y renderizado convierten los modelos 3D en imágenes finales, proceso que puede llevar horas o días según la complejidad. Finalmente, la postproducción integra todos los elementos y añade efectos finales.</p>
+            <p>Equipos especializados trabajan en cada etapa, requiriendo coordinación entre modeladores, animadores, técnicos de iluminación y artistas de efectos visuales.</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+        
+        <div id="modelado-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Modelado 3D</h2>
+            <p>El modelado 3D es el proceso de crear objetos tridimensionales mediante software especializado. Existen varias técnicas: modelado poligonal (trabajar con caras y vértices), NURBS (superficies matemáticas) y escultura digital (similar a esculpir arcilla).</p>
+            <p>Los modelos pueden ser orgánicos (personajes, criaturas) o hard surface (máquinas, arquitectura). Topología limpia (distribución eficiente de polígonos) es crucial para modelos que se animarán.</p>
+            <p>Blender, ZBrush para escultura digital y Autodesk Maya son herramientas líderes. Los modelos terminados se exportan a formatos como OBJ, FBX o STL según su uso final.</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+        
+        <div id="composicion-escena-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Composición de Escena</h2>
+            <p>La composición de escena en 3D implica organizar modelos, luces y cámaras para crear tomas visualmente atractivas. Considera principios cinematográficos como la regla de los tercios, profundidad de campo y guiado visual.</p>
+            <p>Elementos como iluminación (three-point lighting), texturas y fondos trabajan juntos para crear ambientes coherentes. La previsualización (layout) establece ángulos de cámara y timing antes de animar.</p>
+            <p>Herramientas como el viewport de Blender o Maya permiten componer escenas, mientras que software como Unreal Engine se usa cada vez más para previsualización cinematográfica en tiempo real.</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+        
+        <div id="tecnicas-animacion-3d-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Técnicas de Animación 3D</h2>
+            <p>La animación 3D utiliza keyframing (definir poses clave), motion capture (grabar movimiento real) y procedural animation (reglas matemáticas). Técnicas avanzadas incluyen blend shapes (para expresiones faciales), rigging facial y body mechanics (movimiento corporal realista).</p>
+            <p>Simulaciones físicas añaden realismo para pelo, ropa, fluidos y destrucción. Plugins como Marvelous Designer simulan tejidos y prendas de vestir con precisión.</p>
+            <p>El proceso requiere entender principios de animación tradicional aplicados al 3D, como anticipación, follow-through y squash-and-stretch, adaptados a modelos tridimensionales.</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+        
+        <div id="motion-design-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Motion Design</h2>
+            <p>El motion design combina gráficos en movimiento, tipografía animada y efectos visuales para comunicar ideas. Es ampliamente usado en publicidad, títulos de crédito y explicación de conceptos (motion graphics).</p>
+            <p>Técnicas incluyen kinetic typography (texto animado), iconos animados y transiciones creativas. Adobe After Effects es el estándar, junto con plugins como Element 3D para integrar gráficos 3D.</p>
+            <p>El proceso involucra diseño de storyboards, animación de capas y sincronización con audio. Plataformas como Lottie permiten exportar animaciones para apps y web con tamaño reducido.</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+        
+        <div id="stop-motion-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Stop Motion</h2>
+            <p>El stop motion es una técnica de animación que captura objetos físicos fotograma a fotograma, moviéndolos ligeramente entre tomas. Cuando se reproduce la secuencia, se crea ilusión de movimiento.</p>
+            <p>Variantes incluyen claymation (plastilina), cut-out (recortes), pixilación (actores reales) y animación con objetos. Películas como "The Nightmare Before Christmas" y "Wallace & Gromit" son ejemplos famosos.</p>
+            <p>Software como Dragonframe ayuda en la captura y edición, permitiendo onion skinning (ver fotogramas anteriores como referencia) y control preciso de cámaras DSLR.</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+        
+        <div id="hiperrealista-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Técnicas Hiperrealistas</h2>
+            <p>La animación hiperrealista busca imitar la realidad con precisión fotográfica. Requiere modelado detallado, texturas de alta resolución (4K-8K), iluminación basada en física y renderizado con efectos como global illumination y subsurface scattering.</p>
+            <p>Técnicas como photogrammetry (crear modelos 3D a partir de fotos) y scan de materiales reales ayudan a alcanzar realismo. El uncanny valley (valle inquietante) es un desafío cuando los personajes casi pero no completamente reales generan rechazo.</p>
+            <p>Render engines como V-Ray, Arnold y Unreal Engine permiten lograr resultados hiperrealistas, especialmente cuando se combinan con técnicas de composición digital para integrar elementos 3D con video real.</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+        
+        <div id="caricatura-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Técnicas de Caricatura</h2>
+            <p>El estilo caricaturesco en animación exagera proporciones, movimientos y expresiones para crear personajes memorables y expresivos. Series como "Los Simpson" y "Rick and Morty" son ejemplos modernos.</p>
+            <p>Técnicas incluyen squash-and-stretch extremo, siluetas claras (clear lines) y colores planos. El rigging para este estilo simplifica controles para animación rápida pero expresiva.</p>
+            <p>Plugins como Duik Bassel para After Effects facilitan la animación de personajes caricaturescos en 2D, mientras que en 3D se usan deformadores (deformers) y controles personalizados para lograr movimientos exagerados.</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+        
+        <div id="edicion-foto-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Edición de Fotografía</h2>
+            <p>La edición fotográfica profesional permite corregir, mejorar y transformar imágenes. Ajustes básicos incluyen exposición, balance de blancos y contraste, mientras que técnicas avanzadas abarcan retoque de piel, composición de múltiples tomas y creación de efectos especiales.</p>
+            <p>Adobe Photoshop es el estándar industrial, con herramientas como capas de ajuste, máscaras y filtros inteligentes. Lightroom se especializa en flujos de trabajo para fotógrafos con grandes volúmenes de imágenes.</p>
+            <p>Técnicas como HDR (alto rango dinámico), focus stacking (combinar múltiples enfoques) y panorama stitching (unir fotos para vistas amplias) expanden las posibilidades creativas en fotografía digital.</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+        
+        <div id="trabajo-capas-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Trabajo por Capas</h2>
+            <p>El trabajo por capas (layers) es fundamental en edición de imágenes y composición digital. Permite aislar elementos, aplicar efectos no destructivos y mantener flexibilidad durante el proceso creativo.</p>
+            <p>Las capas pueden contener imágenes, texto, formas y ajustes. Modos de fusión (blend modes) como Multiply, Screen y Overlay controlan cómo interactúan las capas entre sí. Máscaras permiten ocultar partes de una capa sin borrarlas permanentemente.</p>
+            <p>Organizar capas en grupos, nombrarlas adecuadamente y usar ajustes preestablecidos (presets) agiliza el flujo de trabajo en proyectos complejos con docenas o cientos de capas.</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+        
+        <div id="edicion-video-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Edición de Video No Lineal</h2>
+            <p>La edición no lineal (NLE) permite acceder a cualquier parte del material en cualquier momento, sin seguir un orden secuencial. Esto facilita reorganizar escenas, probar diferentes estructuras y hacer ajustes precisos.</p>
+            <p>Secuencias de edición contienen múltiples pistas para video, audio, gráficos y efectos. Técnicas como el corte en J y L permiten superponer audio de tomas diferentes para transiciones fluidas.</p>
+            <p>Adobe Premiere Pro, Final Cut Pro y DaVinci Resolve son los NLE más populares, cada uno con fortalezas en diferentes áreas como corrección de color, efectos o integración con otros software.</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+        
+        <div id="software-edicion-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Software de Edición</h2>
+            <p>El ecosistema de software para producción multimedia incluye herramientas especializadas para cada etapa. Para gráficos: Photoshop (raster), Illustrator (vector) y Affinity Photo/Designer como alternativas.</p>
+            <p>En video: Premiere Pro (edición), After Effects (motion graphics), DaVinci Resolve (color grading). Para audio: Audacity (gratuito), Audition (edición avanzada), Pro Tools (producción profesional).</p>
+            <p>Soluciones todo-en-uno como Adobe Creative Cloud facilitan la integración entre aplicaciones, mientras que software como Blender ofrece modelado 3D, animación, edición de video y composición en un solo paquete gratuito.</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+        
+        <div id="premiere-pro-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Adobe Premiere Pro</h2>
+            <p>Premiere Pro es el software líder para edición de video profesional, usado en cine, televisión y contenido web. Su interfaz personalizable y amplio soporte de formatos lo hacen versátil para diferentes flujos de trabajo.</p>
+            <p>Características clave incluyen edición multicámara, seguimiento de movimiento, gráficos esenciales (motion graphics básicos) y Lumetri Color para corrección de color. Integra perfectamente con After Effects para efectos avanzados.</p>
+            <p>Funciones como Auto Reframe ajustan automáticamente composiciones para diferentes aspect ratios (como pasar de horizontal a vertical para redes sociales), ahorrando tiempo en producciones multiplataforma.</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+        
+        <div id="audacity-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Audacity</h2>
+            <p>Audacity es un editor de audio digital gratuito y de código abierto compatible con Windows, macOS y Linux. Aunque su interfaz es básica, ofrece potentes herramientas para grabación y edición no destructiva.</p>
+            <p>Funciones incluyen eliminación de ruido, normalización, ajuste de tempo sin afectar pitch, y soporte para plugins VST. Es ideal para podcasters, músicos independientes y proyectos educativos con presupuesto limitado.</p>
+            <p>Limitaciones incluyen falta de soporte nativo para MIDI y edición multipista avanzada, pero sigue siendo una excelente opción para necesidades básicas y intermedias de producción de audio.</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+        
+        <div id="audition-detail" class="topic-detail">
+            <button class="back-button" onclick="hideDetails()">←</button>
+            <h2>Adobe Audition</h2>
+            <p>Audition es una estación de trabajo de audio profesional dentro de Adobe Creative Cloud, especializada en edición precisa, mezcla y restauración de audio. Es ampliamente usado en postproducción para cine, TV y radio.</p>
+            <p>Su espectrograma permite editar audio visualmente, mientras que herramientas como el eliminador de ruido adaptativo y el de-clicker restauran grabaciones problemáticas. La integración con Premiere Pro facilita el flujo de trabajo audio-video.</p>
+            <p>Funciones avanzadas incluyen edición destructiva para procesamiento intensivo, soporte para surround sound hasta 7.1 canales, y un rack de efectos personalizable para aplicar múltiples procesamientos en cadena.</p>
+            <button class="btn btn-back" onclick="hideDetails()">Volver al menú principal</button>
+        </div>
+    </div>
+    
+    <footer>
+               
+            
+             <div class="footer-column">
+                  <h3>Contacto</h3>
+                    <p>Email: sfqmarisolt@gmail.com</p>
+                    <p>Teléfono: +593 989570762</p>
+                    <p>Dirección: Guayllabamba A.v Simón Bolivar290 y A.v Olímpica</p>
+                </div>
+               
+               
+            </div>
+            
+            <div class="footer-section">
+                <h3>Navegación</h3>
+                <button class="btn" onclick="window.history.back()">Regresar</button>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p>&copy;  2025 | Bachillerato Técnico en Informática | Proyecto Educativo Interactivo</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Historial de navegación
+        let historyStack = [];
+        
+        function showDetail(topic) {
+            // Guardar el estado actual en el historial
+            historyStack.push({
+                scrollPosition: window.scrollY,
+                currentView: document.getElementById('main-content').style.display
+            });
+            
+            // Ocultar el contenido principal
+            document.getElementById('main-content').style.display = 'none';
+            
+            // Ocultar todos los detalles primero
+            const allDetails = document.querySelectorAll('.topic-detail');
+            allDetails.forEach(detail => {
+                detail.style.display = 'none';
+            });
+            
+            // Mostrar el detalle seleccionado con animación
+            const selectedDetail = document.getElementById(topic + '-detail');
+            selectedDetail.style.display = 'block';
+            selectedDetail.style.animation = 'fadeIn 0.5s ease-out';
+            
+            // Desplazarse suavemente hacia el detalle
+            window.scrollTo({
+                top: selectedDetail.offsetTop - 20,
+                behavior: 'smooth'
+            });
+        }
+        
+        function hideDetails() {
+            // Restaurar desde el historial si hay elementos
+            if (historyStack.length > 0) {
+                const previousState = historyStack.pop();
+                document.getElementById('main-content').style.display = previousState.currentView;
+                
+                // Desplazarse a la posición anterior
+                window.scrollTo({
+                    top: previousState.scrollPosition,
+                    behavior: 'smooth'
+                });
+            } else {
+                // Volver al estado inicial si no hay historial
+                document.getElementById('main-content').style.display = 'block';
+                
+                // Ocultar todos los detalles
+                const allDetails = document.querySelectorAll('.topic-detail');
+                allDetails.forEach(detail => {
+                    detail.style.display = 'none';
+                });
+                
+                // Desplazarse suavemente hacia arriba
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }
+        }
+        
+        // Manejar el botón de retroceso del navegador
+        window.addEventListener('popstate', function() {
+            hideDetails();
+        });
+    </script>
+</body>
+</html>
