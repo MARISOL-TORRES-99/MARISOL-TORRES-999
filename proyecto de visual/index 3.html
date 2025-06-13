@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🚀 HTML Master - Juego Educativo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #00ffff;
+      --secondary-color: #ff00ff;
+      --correct-color: #00ff88;
+      --wrong-color: #ff5555;
+      --bg-dark: #0f0c29;
+      --bg-darker: #05051a;
+      --text-light: #ffffff;
+      --text-muted: #aaaaaa;
+      --neon-pink: #ff00ff;
+      --neon-blue: #00ffff;
+      --neon-yellow: #ffff00;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: radial-gradient(circle, var(--bg-dark), var(--bg-darker));
+      color: var(--text-light);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: fadeIn 1s ease-in-out;
+      overflow-x: hidden;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1, h2 {
+      font-family: 'Orbitron', sans-serif;
+      text-align: center;
+      margin: 20px 0;
+      background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+      letter-spacing: 1px;
+    }
+
+    h1 {
+      font-size: 2.8em;
+      margin-bottom: 15px;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 10px var(--neon-blue); }
+      to { text-shadow: 0 0 20px var(--neon-pink), 0 0 30px var(--neon-blue); }
+    }
+
+    h2 {
+      font-size: 2em;
+      margin-bottom: 25px;
+    }
+
+    p {
+      color: var(--text-light);
+      line-height: 1.6;
+      margin: 10px 0;
+    }
+
+    .menu, .quiz, .result {
+      display: none;
+      padding: 30px;
+      border-radius: 20px;
+      background: rgba(0, 0, 0, 0.6);
+      margin: 20px auto;
+      width: 90%;
+      max-width: 800px;
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+      backdrop-filter: blur(5px);
+      border: 2px solid var(--neon-blue);
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .active {
+      display: block;
+    }
+
+    button {
+      padding: 15px 30px;
+      font-size: 1.2em;
+      margin: 15px 10px;
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(20, 20, 20, 0.8));
+      border: 2px solid var(--neon-blue);
+      color: var(--neon-blue);
+      cursor: pointer;
+      border-radius: 50px;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+      transition: all 0.3s ease;
+      font-family: 'Orbitron', sans-serif;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(255, 0, 255, 0.2));
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
+      color: #fff;
+    }
+
+    button:hover::before {
+      opacity: 1;
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    .option {
+      display: block;
+      margin: 20px auto;
+      width: 100%;
+      max-width: 600px;
+      text-align: left;
+      padding: 15px 25px;
+      transition: all 0.2s ease;
+    }
+
+    .option:hover {
+      transform: translateX(10px);
+    }
+
+    #timer {
+      font-size: 1.8em;
+      font-family: 'Orbitron', sans-serif;
+      color: var(--neon-pink);
+      margin: 20px 0;
+      text-shadow: 0 0 10px var(--neon-pink);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #timer::before {
+      content: '⏱️';
+      margin-right: 10px;
+    }
+
+    .motivador {
+      font-size: 1.5em;
+      color: var(--neon-yellow);
+      margin: 30px 0;
+      text-shadow: 0 0 10px var(--neon-yellow);
+      font-weight: bold;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 25px 0;
+    }
+
+    li {
+      margin: 15px 0;
+      padding-left: 30px;
+      position: relative;
+      line-height: 1.6;
+    }
+
+    li::before {
+      content: '✨';
+      position: absolute;
+      left: 0;
+      color: var(--neon-yellow);
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    footer {
+      background: rgba(0, 0, 0, 0.8);
+      padding: 20px;
+      color: var(--text-muted);
+      font-size: 0.9em;
+      text-align: center;
+      margin-top: auto;
+      width: 100%;
+      border-top: 2px solid var(--neon-blue);
+      box-shadow: 0 -5px 20px rgba(0, 255, 255, 0.2);
+    }
+
+    .progress-container {
+      width: 100%;
+      background-color: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 10px;
+      background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
+      border-radius: 10px;
+      transition: width 0.5s ease;
+    }
+
+    .question-counter {
+      font-family: 'Orbitron', sans-serif;
+      color: var(--neon-blue);
+      margin-bottom: 15px;
+      text-align: right;
+    }
+
+    /* Efectos de partículas */
+    .particle {
+      position: absolute;
+      background-color: var(--neon-blue);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Efecto de confeti */
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      opacity: 0;
+      z-index: 100;
+    }
+
+    /* Estilos para respuestas correctas/incorrectas */
+    .correct-answer {
+      border-color: var(--correct-color) !important;
+      background: rgba(0, 255, 136, 0.1) !important;
+      color: var(--correct-color) !important;
+      box-shadow: 0 0 20px var(--correct-color) !important;
+    }
+
+    .wrong-answer {
+      border-color: var(--wrong-color) !important;
+      background: rgba(255, 85, 85, 0.1) !important;
+      color: var(--wrong-color) !important;
+      box-shadow: 0 0 20px var(--wrong-color) !important;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2em;
+      }
+      
+      h2 {
+        font-size: 1.5em;
+      }
+      
+      button {
+        padding: 12px 20px;
+        font-size: 1em;
+        width: 100%;
+        max-width: 300px;
+      }
+      
+      .menu, .quiz, .result {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="menu active" id="menu">
+    <h1>🚀 HTML MASTER</h1>
+    <p><strong>Domina los fundamentos de HTML con este juego interactivo</strong></p>
+    <p>Instrucciones:</p>
+    <ul>
+      <li>Responde 8 preguntas sobre HTML para poner a prueba tus conocimientos.</li>
+      <li>Cada pregunta tiene un límite de tiempo de 15 segundos.</li>
+      <li>Las respuestas correctas se destacarán en verde, las incorrectas en rojo.</li>
+      <li>Recibirás retroalimentación personalizada al finalizar.</li>
+      <li>¡Demuestra lo que sabes y mejora tus habilidades!</li>
+    </ul>
+    <button onclick="startGame()">🚀 COMENZAR JUEGO</button>
+    <button onclick="goBack()">⬅️ VOLVER ATRÁS</button>
+  </div>
+
+  <div class="quiz" id="quiz">
+    <div class="question-counter" id="questionCounter">Pregunta 1/8</div>
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <h2 id="question">Pregunta aquí</h2>
+    <div id="timer">15</div>
+    <div id="options"></div>
+    <button onclick="nextQuestion()">➡️ SIGUIENTE</button>
+  </div>
+
+  <div class="result" id="result">
+    <h2>🎉 RESULTADOS FINALES 🎉</h2>
+    <div id="scoreDisplay"></div>
+    <p id="mensaje" class="motivador"></p>
+    <div id="feedback"></div>
+    <button onclick="restartGame()">🔁 JUGAR DE NUEVO</button>
+    <button onclick="goBack()">⬅️ VOLVER ATRÁS</button>
+  </div>
+
+  <footer>
+    © 2025 | Bachillerato Técnico en Informática | Proyecto Educativo Interactivo
+  </footer>
+
+  <script>
+    // Preguntas del juego mejoradas
+    const questions = [
+      { 
+        question: "¿Qué significa HTML?", 
+        options: [
+          "HyperText Markup Language", 
+          "HighText Machine Language", 
+          "Hyperlink and Text Markup Language", 
+          "Home Tool Markup Language"
+        ], 
+        answer: 0,
+        explanation: "HTML significa HyperText Markup Language (Lenguaje de Marcado de Hipertexto). Es el lenguaje estándar para crear páginas web."
+      },
+      { 
+        question: "¿Para qué se usa principalmente HTML?", 
+        options: [
+          "Diseñar videojuegos complejos", 
+          "Estilizar páginas web", 
+          "Estructurar y organizar contenido en la web", 
+          "Crear y gestionar bases de datos"
+        ], 
+        answer: 2,
+        explanation: "HTML se usa para estructurar y organizar el contenido en la web. Para estilizar se usa CSS y para funcionalidad JavaScript."
+      },
+      { 
+        question: "¿Cuál es la etiqueta correcta para crear un enlace?", 
+        options: [
+          "<link>", 
+          "<a>", 
+          "<href>", 
+          "<url>"
+        ], 
+        answer: 1,
+        explanation: "La etiqueta <a> (anchor) se usa para crear enlaces en HTML, junto con el atributo href que especifica la URL de destino."
+      },
+      { 
+        question: "¿Con qué etiqueta se crea un párrafo en HTML?", 
+        options: [
+          "<p>", 
+          "<para>", 
+          "<text>", 
+          "<paragraph>"
+        ], 
+        answer: 0,
+        explanation: "La etiqueta <p> es el elemento estándar para crear párrafos en HTML. Es un elemento de bloque que separa el texto."
+      },
+      { 
+        question: "¿Qué etiqueta se usa para los encabezados principales?", 
+        options: [
+          "<head>", 
+          "<h1>", 
+          "<title>", 
+          "<header>"
+        ], 
+        answer: 1,
+        explanation: "Las etiquetas <h1> a <h6> se usan para encabezados, siendo <h1> el más importante (generalmente el título principal de la página)."
+      },
+      { 
+        question: "¿Qué atributo define la dirección de destino de un enlace?", 
+        options: [
+          "href", 
+          "src", 
+          "link", 
+          "target"
+        ], 
+        answer: 0,
+        explanation: "El atributo href (hypertext reference) especifica la URL a la que apunta el enlace. El atributo target define cómo se abre el enlace."
+      },
+      { 
+        question: "¿Cuál es el elemento raíz de un documento HTML?", 
+        options: [
+          "<main>", 
+          "<head>", 
+          "<html>", 
+          "<body>"
+        ], 
+        answer: 2,
+        explanation: "El elemento <html> es el contenedor raíz que engloba todo el documento HTML. Dentro van <head> (metadatos) y <body> (contenido visible)."
+      },
+      { 
+        question: "¿Qué etiqueta se usa para insertar una imagen?", 
+        options: [
+          "<pic>", 
+          "<image>", 
+          "<img>", 
+          "<src>"
+        ], 
+        answer: 2,
+        explanation: "La etiqueta <img> se usa para insertar imágenes en HTML. Es un elemento vacío que requiere el atributo src para especificar la ruta de la imagen."
+      }
+    ];
+
+    // Variables del juego
+    let currentQuestion = 0;
+    let score = 0;
+    let timer;
+    let timeLeft = 15;
+    let selectedAnswer = null;
+    let gameStarted = false;
+
+    // Elementos del DOM
+    const menu = document.getElementById('menu');
+    const quiz = document.getElementById('quiz');
+    const result = document.getElementById('result');
+    const questionElement = document.getElementById('question');
+    const optionsElement = document.getElementById('options');
+    const timerElement = document.getElementById('timer');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const messageElement = document.getElementById('mensaje');
+    const feedbackElement = document.getElementById('feedback');
+    const questionCounter = document.getElementById('questionCounter');
+    const progressBar = document.getElementById('progressBar');
+
+    // Iniciar el juego
+    function startGame() {
+      menu.classList.remove('active');
+      quiz.classList.add('active');
+      currentQuestion = 0;
+      score = 0;
+      gameStarted = true;
+      showQuestion();
+      createParticles(20, ['#00ffff', '#ff00ff', '#ffff00']);
+    }
+
+    // Mostrar pregunta actual
+    function showQuestion() {
+      clearInterval(timer);
+      timeLeft = 15;
+      timerElement.textContent = timeLeft;
+      selectedAnswer = null;
+      
+      // Actualizar contador de preguntas
+      questionCounter.textContent = `Pregunta ${currentQuestion + 1}/${questions.length}`;
+      progressBar.style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+      
+      // Mostrar pregunta y opciones
+      const q = questions[currentQuestion];
+      questionElement.textContent = q.question;
+      optionsElement.innerHTML = '';
+      
+      q.options.forEach((option, index) => {
+        const btn = document.createElement('button');
+        btn.textContent = option;
+        btn.classList.add('option');
+        btn.onclick = () => selectAnswer(index);
+        optionsElement.appendChild(btn);
+      });
+      
+      // Iniciar temporizador
+      timer = setInterval(() => {
+        timeLeft--;
+        timerElement.textContent = timeLeft;
+        
+        // Cambiar color cuando el tiempo es crítico
+        if (timeLeft <= 5) {
+          timerElement.style.color = '#ff5555';
+          timerElement.style.animation = 'pulse 0.5s infinite alternate';
+        }
+        
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          disableOptions();
+          showCorrectAnswer();
+        }
+      }, 1000);
+    }
+
+    // Seleccionar respuesta
+    function selectAnswer(index) {
+      if (selectedAnswer !== null) return;
+      
+      clearInterval(timer);
+      selectedAnswer = index;
+      const correctIndex = questions[currentQuestion].answer;
+      
+      // Resaltar respuestas
+      const optionButtons = document.querySelectorAll('.option');
+      optionButtons.forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === correctIndex) {
+          btn.classList.add('correct-answer');
+          createParticles(5, ['#00ff88'], btn.getBoundingClientRect());
+        } else if (i === index && i !== correctIndex) {
+          btn.classList.add('wrong-answer');
+          createParticles(5, ['#ff5555'], btn.getBoundingClientRect());
+        }
+      });
+      
+      // Actualizar puntaje
+      if (index === correctIndex) {
+        score++;
+      }
+    }
+
+    // Mostrar respuesta correcta (cuando el tiempo se acaba)
+    function showCorrectAnswer() {
+      const correctIndex = questions[currentQuestion].answer;
+      const optionButtons = document.querySelectorAll('.option');
+      
+      optionButtons.forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === correctIndex) {
+          btn.classList.add('correct-answer');
+        } else if (i === selectedAnswer) {
+          btn.classList.add('wrong-answer');
+        }
+      });
+    }
+
+    // Deshabilitar opciones
+    function disableOptions() {
+      document.querySelectorAll('.option').forEach(btn => btn.disabled = true);
+    }
+
+    // Siguiente pregunta
+    function nextQuestion() {
+      if (selectedAnswer === null && timeLeft > 0) {
+        alert('Por favor selecciona una respuesta antes de continuar.');
+        return;
+      }
+      
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    // Mostrar resultados
+    function showResult() {
+      quiz.classList.remove('active');
+      result.classList.add('active');
+      
+      // Mostrar puntaje
+      scoreDisplay.innerHTML = `
+        <h3 style="color: var(--neon-blue); margin-bottom: 10px;">RESUMEN</h3>
+        <p>Respuestas correctas: <span style="color: var(--correct-color);">${score}</span> de ${questions.length}</p>
+        <p>Porcentaje: <span style="color: var(--neon-yellow);">${Math.round((score / questions.length) * 100)}%</span></p>
+      `;
+      
+      // Mostrar mensaje motivacional
+      let message = '';
+      if (score === questions.length) {
+        message = "🌟 ¡PERFECTO! Eres un experto en HTML. ¡Dominas todos los conceptos básicos! 🚀";
+        createConfetti(100);
+      } else if (score >= questions.length * 0.75) {
+        message = "💪 ¡EXCELENTE! Tienes un gran conocimiento de HTML. Con un poco más de práctica serás imparable.";
+      } else if (score >= questions.length * 0.5) {
+        message = "👍 ¡BUEN TRABAJO! Vas por buen camino. Revisa los conceptos básicos y sigue practicando.";
+      } else {
+        message = "📚 ¡NO TE RINDAS! HTML tiene una curva de aprendizaje. Revisa los recursos y vuelve a intentarlo.";
+      }
+      messageElement.textContent = message;
+      
+      // Mostrar retroalimentación detallada
+      feedbackElement.innerHTML = '<h3 style="color: var(--neon-pink); margin: 20px 0 10px;">DETALLES:</h3>';
+      questions.forEach((q, index) => {
+        feedbackElement.innerHTML += `
+          <div style="margin-bottom: 20px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; border-left: 4px solid ${index === currentQuestion ? 'var(--neon-blue)' : 'transparent'}">
+            <p><strong>Pregunta ${index + 1}:</strong> ${q.question}</p>
+            <p><strong>Respuesta correcta:</strong> ${q.options[q.answer]}</p>
+            <p style="color: var(--neon-yellow);">${q.explanation}</p>
+          </div>
+        `;
+      });
+    }
+
+    // Reiniciar juego
+    function restartGame() {
+      result.classList.remove('active');
+      menu.classList.add('active');
+      gameStarted = false;
+    }
+
+    // Volver atrás
+    function goBack() {
+      window.history.back();
+    }
+
+    // Efecto de partículas
+    function createParticles(count, colors, rect = null) {
+      const centerX = rect ? rect.left + rect.width / 2 : window.innerWidth / 2;
+      const centerY = rect ? rect.top + rect.height / 2 : window.innerHeight / 2;
+      
+      for (let i = 0; i < count; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.width = `${3 + Math.random() * 7}px`;
+        particle.style.height = particle.style.width;
+        particle.style.left = `${centerX}px`;
+        particle.style.top = `${centerY}px`;
+        
+        document.body.appendChild(particle);
+        
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = 1 + Math.random() * 3;
+        const lifetime = 500 + Math.random() * 1000;
+        
+        let posX = centerX;
+        let posY = centerY;
+        let opacity = 1;
+        let size = parseFloat(particle.style.width);
+        
+        const animate = () => {
+          posX += Math.cos(angle) * velocity;
+          posY += Math.sin(angle) * velocity;
+          opacity -= 0.01;
+          size *= 0.97;
+          
+          particle.style.left = `${posX}px`;
+          particle.style.top = `${posY}px`;
+          particle.style.opacity = opacity;
+          particle.style.width = `${size}px`;
+          particle.style.height = `${size}px`;
+          
+          if (opacity <= 0) {
+            particle.remove();
+            return;
+          }
+          
+          requestAnimationFrame(animate);
+        };
+        
+        requestAnimationFrame(animate);
+      }
+    }
+
+    // Efecto de confeti
+    function createConfetti(count) {
+      for (let i = 0; i < count; i++) {
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti');
+        confetti.style.left = `${Math.random() * window.innerWidth}px`;
+        confetti.style.top = `${-10}px`;
+        confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        confetti.style.width = `${5 + Math.random() * 10}px`;
+        confetti.style.height = `${5 + Math.random() * 10}px`;
+        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+        
+        document.body.appendChild(confetti);
+        
+        // Animación
+        setTimeout(() => {
+          confetti.style.opacity = '1';
+          confetti.style.transform = `translate(${(Math.random() - 0.5) * 200}px, ${window.innerHeight}px) rotate(${Math.random() * 360}deg)`;
+          confetti.style.transition = `all ${2 + Math.random() * 3}s cubic-bezier(0.1, 0.8, 0.3, 1)`;
+          
+          setTimeout(() => {
+            confetti.style.opacity = '0';
+            setTimeout(() => confetti.remove(), 1000);
+          }, 2000);
+        }, i * 50);
+      }
+    }
+
+    // Efecto de carga inicial
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        createParticles(30, ['#00ffff', '#ff00ff', '#ffff00']);
+      }, 500);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dibujo Vectorial Neon</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        
+        :root {
+            --neon-pink: #ff2ced;
+            --neon-blue: #0af2ff;
+            --neon-green: #00ff9d;
+            --neon-purple: #9d00ff;
+            --neon-yellow: #fff700;
+            --dark-bg: #0f0f1a;
+        }
+        
+        body {
+            font-family: 'Press Start 2P', cursive;
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-bg);
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        header {
+            background: rgba(15, 15, 26, 0.8);
+            color: var(--neon-blue);
+            padding: 20px 0;
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+            box-shadow: 0 0 15px var(--neon-blue);
+            border: 2px solid var(--neon-blue);
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px var(--neon-blue);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+            animation: glow 2s infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue); }
+            to { text-shadow: 0 0 15px var(--neon-blue), 0 0 30px var(--neon-blue), 0 0 40px var(--neon-blue); }
+        }
+        
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            background: rgba(15, 15, 26, 0.8);
+            border-radius: 8px;
+            box-shadow: 0 0 15px var(--neon-purple);
+            border: 2px solid var(--neon-purple);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            border-bottom: 1px solid var(--neon-purple);
+        }
+        
+        #drawingCanvas {
+            background-color: rgba(0, 0, 0, 0.7);
+            cursor: crosshair;
+            display: block;
+        }
+        
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 15px;
+            background: rgba(15, 15, 26, 0.9);
+            border-bottom: 1px solid var(--neon-purple);
+            gap: 10px;
+        }
+        
+        .tool-group {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .tool-group label {
+            margin-right: 8px;
+            font-size: 10px;
+            color: var(--neon-green);
+            text-shadow: 0 0 5px var(--neon-green);
+        }
+        
+        button, select, input {
+            padding: 8px 12px;
+            margin-right: 8px;
+            border: 2px solid var(--neon-pink);
+            border-radius: 4px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+        }
+        
+        button:hover, select:hover {
+            box-shadow: 0 0 10px var(--neon-pink);
+            transform: translateY(-2px);
+        }
+        
+        button.active {
+            background-color: var(--neon-pink);
+            color: black;
+            box-shadow: 0 0 15px var(--neon-pink);
+        }
+        
+        .color-picker {
+            width: 30px;
+            height: 30px;
+            padding: 0;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid white;
+            box-shadow: 0 0 10px white;
+        }
+        
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            background: rgba(15, 15, 26, 0.9);
+            border-top: 1px solid var(--neon-purple);
+        }
+        
+        .btn-primary {
+            background-color: var(--neon-green);
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            box-shadow: 0 0 10px var(--neon-green);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--neon-yellow);
+            box-shadow: 0 0 15px var(--neon-yellow);
+        }
+        
+        .btn-secondary {
+            background-color: var(--neon-purple);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            box-shadow: 0 0 10px var(--neon-purple);
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--neon-pink);
+            box-shadow: 0 0 15px var(--neon-pink);
+        }
+        
+        .shape-preview {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+        
+        /* Efectos de fondo dinámico */
+        .bg-effects {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+            animation: float 15s infinite linear;
+            opacity: 0.3;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0); }
+            50% { transform: translateY(-100px) translateX(100px); }
+            100% { transform: translateY(0) translateX(0); }
+        }
+        
+        /* Nuevas herramientas */
+        .special-tools {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .neon-btn {
+            background: none;
+            border: 2px solid;
+            border-radius: 4px;
+            font-size: 10px;
+            padding: 8px 12px;
+            transition: all 0.3s;
+        }
+        
+        .pink { border-color: var(--neon-pink); color: var(--neon-pink); }
+        .blue { border-color: var(--neon-blue); color: var(--neon-blue); }
+        .green { border-color: var(--neon-green); color: var(--neon-green); }
+        .yellow { border-color: var(--neon-yellow); color: var(--neon-yellow); }
+        .purple { border-color: var(--neon-purple); color: var(--neon-purple); }
+        
+        .neon-btn:hover {
+            color: black;
+            box-shadow: 0 0 15px;
+        }
+        
+        .pink:hover { background: var(--neon-pink); }
+        .blue:hover { background: var(--neon-blue); }
+        .green:hover { background: var(--neon-green); }
+        .yellow:hover { background: var(--neon-yellow); }
+        .purple:hover { background: var(--neon-purple); }
+        
+        /* Slider personalizado */
+        input[type="range"] {
+            -webkit-appearance: none;
+            height: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid var(--neon-blue);
+            border-radius: 5px;
+            box-shadow: 0 0 5px var(--neon-blue);
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--neon-green);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 5px var(--neon-green);
+        }
+    </style>
+</head>
+<body>
+    <!-- Efectos de fondo dinámicos -->
+    <div class="bg-effects" id="bgEffects"></div>
+    
+    <div class="container">
+        <header>
+            <h1>DIBUJO VECTORIAL NEON</h1>
+            <p>Crea arte digital con estilo futurista</p>
+        </header>
+        
+        <div class="game-container">
+            <div class="toolbar">
+                <div class="tool-group">
+                    <label>HERRAMIENTAS:</label>
+                    <button id="pencilTool" class="active pink">LÁPIZ</button>
+                    <button id="lineTool" class="blue">LÍNEA</button>
+                    <button id="rectTool" class="green">RECTÁNGULO</button>
+                    <button id="circleTool" class="yellow">CÍRCULO</button>
+                    <button id="textTool" class="purple">TEXTO</button>
+                    <button id="starTool" class="pink">ESTRELLA</button>
+                    <button id="sprayTool" class="blue">SPRAY</button>
+                </div>
+                
+                <div class="tool-group">
+                    <label>COLORES NEON:</label>
+                    <button class="neon-btn pink" data-color="#ff2ced">ROSA</button>
+                    <button class="neon-btn blue" data-color="#0af2ff">AZUL</button>
+                    <button class="neon-btn green" data-color="#00ff9d">VERDE</button>
+                    <button class="neon-btn yellow" data-color="#fff700">AMARILLO</button>
+                    <button class="neon-btn purple" data-color="#9d00ff">PÚRPURA</button>
+                    <input type="color" id="colorPicker" value="#ff2ced" class="color-picker">
+                </div>
+                
+                <div class="tool-group">
+                    <label>GROSOR:</label>
+                    <input type="range" id="lineWidth" min="1" max="50" value="5">
+                    <span id="widthValue" style="color: var(--neon-blue);">5</span>
+                </div>
+                
+                <div class="tool-group">
+                    <label>RELLENO:</label>
+                    <select id="fillStyle">
+                        <option value="none">SIN RELLENO</option>
+                        <option value="solid">RELLENO SÓLIDO</option>
+                        <option value="transparent">TRANSPARENTE</option>
+                        <option value="pattern">PATRÓN NEON</option>
+                    </select>
+                </div>
+                
+                <div class="special-tools">
+                    <button id="eraseTool" class="neon-btn pink">BORRAR</button>
+                    <button id="undoTool" class="neon-btn blue">DESHACER</button>
+                    <button id="rainbowTool" class="neon-btn green">ARCOÍRIS</button>
+                    <button id="glowTool" class="neon-btn yellow">BRILLO</button>
+                    <button id="clearLayer" class="neon-btn purple">LIMPIAR CAPA</button>
+                </div>
+            </div>
+            
+            <div class="canvas-container">
+                <canvas id="drawingCanvas" width="960" height="500"></canvas>
+            </div>
+            
+            <div class="footer">
+                <button id="clearCanvas" class="btn-secondary">LIMPIAR TODO</button>
+                <div>
+                    <button id="saveCanvas" class="btn-primary">GUARDAR ARTE</button>
+                    <button id="backButton" class="btn-secondary">REGRESAR</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos del DOM
+            const canvas = document.getElementById('drawingCanvas');
+            const ctx = canvas.getContext('2d');
+            const colorPicker = document.getElementById('colorPicker');
+            const lineWidth = document.getElementById('lineWidth');
+            const widthValue = document.getElementById('widthValue');
+            const fillStyle = document.getElementById('fillStyle');
+            const clearCanvas = document.getElementById('clearCanvas');
+            const saveCanvas = document.getElementById('saveCanvas');
+            const backButton = document.getElementById('backButton');
+            const bgEffects = document.getElementById('bgEffects');
+            
+            // Crear partículas de fondo
+            createParticles();
+            
+            // Herramientas
+            const tools = {
+                pencil: document.getElementById('pencilTool'),
+                line: document.getElementById('lineTool'),
+                rect: document.getElementById('rectTool'),
+                circle: document.getElementById('circleTool'),
+                text: document.getElementById('textTool'),
+                star: document.getElementById('starTool'),
+                spray: document.getElementById('sprayTool'),
+                erase: document.getElementById('eraseTool')
+            };
+            
+            // Botones de colores neón
+            const neonButtons = document.querySelectorAll('.neon-btn[data-color]');
+            
+            // Variables de estado
+            let currentTool = 'pencil';
+            let isDrawing = false;
+            let startX, startY;
+            let shapes = [];
+            let currentShape = null;
+            let previewShape = null;
+            let history = [];
+            let rainbowMode = false;
+            let glowMode = false;
+            let eraseMode = false;
+            let sprayInterval = null;
+            
+            // Configuración inicial
+            ctx.strokeStyle = colorPicker.value;
+            ctx.fillStyle = colorPicker.value;
+            ctx.lineWidth = lineWidth.value;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
+            // Event listeners para herramientas
+            Object.keys(tools).forEach(tool => {
+                tools[tool].addEventListener('click', () => {
+                    if (tool === 'erase') {
+                        eraseMode = !eraseMode;
+                        tools.erase.classList.toggle('active', eraseMode);
+                        if (eraseMode) {
+                            currentTool = 'erase';
+                            document.querySelectorAll('.tool-group button.active').forEach(btn => btn.classList.remove('active'));
+                        }
+                    } else {
+                        eraseMode = false;
+                        tools.erase.classList.remove('active');
+                        currentTool = tool;
+                        // Actualizar estado activo de los botones
+                        document.querySelectorAll('.tool-group button.active').forEach(btn => btn.classList.remove('active'));
+                        tools[tool].classList.add('active');
+                    }
+                });
+            });
+            
+            // Event listeners para botones de colores neón
+            neonButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const color = button.getAttribute('data-color');
+                    colorPicker.value = color;
+                    ctx.strokeStyle = color;
+                    ctx.fillStyle = color;
+                });
+            });
+            
+            // Event listeners para controles
+            colorPicker.addEventListener('input', () => {
+                ctx.strokeStyle = colorPicker.value;
+                ctx.fillStyle = colorPicker.value;
+            });
+            
+            lineWidth.addEventListener('input', () => {
+                ctx.lineWidth = lineWidth.value;
+                widthValue.textContent = lineWidth.value;
+            });
+            
+            fillStyle.addEventListener('change', () => {
+                // La implementación del relleno se maneja en las funciones de dibujo
+            });
+            
+            // Event listeners del canvas
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            
+            // Botones de acción
+            clearCanvas.addEventListener('click', () => {
+                if (confirm('¿Borrar todo el lienzo?')) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    shapes = [];
+                    saveState();
+                }
+            });
+            
+            saveCanvas.addEventListener('click', () => {
+                const link = document.createElement('a');
+                link.download = 'arte-neon.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+            
+            backButton.addEventListener('click', () => {
+                window.history.back();
+            });
+            
+            // Herramientas especiales
+            document.getElementById('undoTool').addEventListener('click', undoLastAction);
+            document.getElementById('rainbowTool').addEventListener('click', toggleRainbowMode);
+            document.getElementById('glowTool').addEventListener('click', toggleGlowMode);
+            document.getElementById('clearLayer').addEventListener('click', clearCurrentLayer);
+            
+            // Funciones de dibujo
+            function startDrawing(e) {
+                isDrawing = true;
+                startX = e.offsetX;
+                startY = e.offsetY;
+                
+                if (eraseMode) {
+                    ctx.globalCompositeOperation = 'destination-out';
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                    return;
+                }
+                
+                ctx.globalCompositeOperation = 'source-over';
+                
+                if (currentTool === 'pencil' || currentTool === 'spray') {
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                    if (currentTool === 'spray') {
+                        startSpray(e);
+                    }
+                } else {
+                    // Para formas, creamos un objeto de forma temporal
+                    currentShape = {
+                        tool: currentTool,
+                        startX: startX,
+                        startY: startY,
+                        endX: startX,
+                        endY: startY,
+                        color: rainbowMode ? getRainbowColor() : colorPicker.value,
+                        lineWidth: lineWidth.value,
+                        fill: fillStyle.value,
+                        glow: glowMode
+                    };
+                    
+                    if (currentTool === 'text') {
+                        const text = prompt('Ingresa el texto:', 'TEXTO NEON');
+                        if (text) {
+                            currentShape.text = text;
+                            drawText(currentShape);
+                            shapes.push({...currentShape});
+                            saveState();
+                            currentShape = null;
+                            isDrawing = false;
+                        } else {
+                            isDrawing = false;
+                            currentShape = null;
+                        }
+                    }
+                }
+            }
+            
+            function draw(e) {
+                if (!isDrawing) return;
+                
+                const x = e.offsetX;
+                const y = e.offsetY;
+                
+                if (eraseMode) {
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                    return;
+                }
+                
+                if (currentTool === 'pencil') {
+                    if (rainbowMode) {
+                        ctx.strokeStyle = getRainbowColor();
+                    }
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                } else if (currentTool === 'spray') {
+                    // El spray se maneja en su propio intervalo
+                } else if (currentShape) {
+                    // Actualizar la forma temporal
+                    currentShape.endX = x;
+                    currentShape.endY = y;
+                    if (rainbowMode) {
+                        currentShape.color = getRainbowColor();
+                    }
+                    
+                    // Eliminar la vista previa anterior si existe
+                    if (previewShape) {
+                        clearPreview();
+                    }
+                    
+                    // Dibujar vista previa
+                    drawPreview(currentShape);
+                }
+            }
+            
+            function stopDrawing() {
+                if (!isDrawing) return;
+                isDrawing = false;
+                
+                if (eraseMode) {
+                    ctx.closePath();
+                    saveState();
+                    return;
+                }
+                
+                if (currentTool === 'spray') {
+                    stopSpray();
+                }
+                
+                if (currentTool !== 'pencil' && currentTool !== 'spray' && currentShape && currentTool !== 'text') {
+                    // Guardar la forma final
+                    shapes.push({...currentShape});
+                    // Dibujar la forma permanente
+                    drawShape(currentShape);
+                    // Limpiar la vista previa
+                    clearPreview();
+                    saveState();
+                    currentShape = null;
+                } else if (currentTool === 'pencil') {
+                    ctx.closePath();
+                    saveState();
+                }
+            }
+            
+            function drawShape(shape) {
+                const originalOperation = ctx.globalCompositeOperation;
+                
+                if (shape.glow) {
+                    ctx.globalCompositeOperation = 'lighter';
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = shape.color;
+                } else {
+                    ctx.shadowBlur = 0;
+                }
+                
+                ctx.strokeStyle = shape.color;
+                ctx.fillStyle = shape.fill === 'pattern' ? createPattern(shape.color) : shape.color;
+                ctx.lineWidth = shape.lineWidth;
+                
+                switch (shape.tool) {
+                    case 'line':
+                        ctx.beginPath();
+                        ctx.moveTo(shape.startX, shape.startY);
+                        ctx.lineTo(shape.endX, shape.endY);
+                        ctx.stroke();
+                        break;
+                        
+                    case 'rect':
+                        ctx.beginPath();
+                        const rectX = Math.min(shape.startX, shape.endX);
+                        const rectY = Math.min(shape.startY, shape.endY);
+                        const rectWidth = Math.abs(shape.endX - shape.startX);
+                        const rectHeight = Math.abs(shape.endY - shape.startY);
+                        
+                        ctx.rect(rectX, rectY, rectWidth, rectHeight);
+                        
+                        if (shape.fill === 'solid' || shape.fill === 'pattern' || shape.fill === 'transparent') {
+                            ctx.fill();
+                        }
+                        ctx.stroke();
+                        break;
+                        
+                    case 'circle':
+                        const radius = Math.sqrt(
+                            Math.pow(shape.endX - shape.startX, 2) + 
+                            Math.pow(shape.endY - shape.startY, 2)
+                        );
+                        
+                        ctx.beginPath();
+                        ctx.arc(shape.startX, shape.startY, radius, 0, Math.PI * 2);
+                        
+                        if (shape.fill === 'solid' || shape.fill === 'pattern' || shape.fill === 'transparent') {
+                            ctx.fill();
+                        }
+                        ctx.stroke();
+                        break;
+                        
+                    case 'star':
+                        drawStar(shape.startX, shape.startY, 
+                                Math.sqrt(Math.pow(shape.endX - shape.startX, 2) + 
+                                Math.pow(shape.endY - shape.startY, 2)), 
+                                5, shape);
+                        break;
+                }
+                
+                ctx.globalCompositeOperation = originalOperation;
+                ctx.shadowBlur = 0;
+            }
+            
+            function drawPreview(shape) {
+                // Crear un canvas temporal para la vista previa
+                previewShape = document.createElement('canvas');
+                previewShape.width = canvas.width;
+                previewShape.height = canvas.height;
+                previewShape.className = 'shape-preview';
+                previewShape.style.left = canvas.offsetLeft + 'px';
+                previewShape.style.top = canvas.offsetTop + 'px';
+                
+                const previewCtx = previewShape.getContext('2d');
+                
+                if (shape.glow) {
+                    previewCtx.globalCompositeOperation = 'lighter';
+                    previewCtx.shadowBlur = 15;
+                    previewCtx.shadowColor = shape.color;
+                }
+                
+                previewCtx.strokeStyle = shape.color + 'aa';
+                previewCtx.fillStyle = shape.fill === 'pattern' ? createPattern(shape.color + '33') : shape.color + '33';
+                previewCtx.lineWidth = shape.lineWidth;
+                
+                switch (shape.tool) {
+                    case 'line':
+                        previewCtx.beginPath();
+                        previewCtx.moveTo(shape.startX, shape.startY);
+                        previewCtx.lineTo(shape.endX, shape.endY);
+                        previewCtx.stroke();
+                        break;
+                        
+                    case 'rect':
+                        previewCtx.beginPath();
+                        const rectX = Math.min(shape.startX, shape.endX);
+                        const rectY = Math.min(shape.startY, shape.endY);
+                        const rectWidth = Math.abs(shape.endX - shape.startX);
+                        const rectHeight = Math.abs(shape.endY - shape.startY);
+                        
+                        previewCtx.rect(rectX, rectY, rectWidth, rectHeight);
+                        
+                        if (shape.fill !== 'none') {
+                            previewCtx.fill();
+                        }
+                        previewCtx.stroke();
+                        break;
+                        
+                    case 'circle':
+                        const radius = Math.sqrt(
+                            Math.pow(shape.endX - shape.startX, 2) + 
+                            Math.pow(shape.endY - shape.startY, 2)
+                        );
+                        
+                        previewCtx.beginPath();
+                        previewCtx.arc(shape.startX, shape.startY, radius, 0, Math.PI * 2);
+                        
+                        if (shape.fill !== 'none') {
+                            previewCtx.fill();
+                        }
+                        previewCtx.stroke();
+                        break;
+                        
+                    case 'star':
+                        drawStarOnCtx(previewCtx, shape.startX, shape.startY, 
+                                    Math.sqrt(Math.pow(shape.endX - shape.startX, 2) + 
+                                    Math.pow(shape.endY - shape.startY, 2)), 
+                                    5, shape, true);
+                        break;
+                }
+                
+                canvas.parentNode.appendChild(previewShape);
+            }
+            
+            function clearPreview() {
+                if (previewShape) {
+                    previewShape.remove();
+                    previewShape = null;
+                }
+            }
+            
+            function drawText(shape) {
+                const originalOperation = ctx.globalCompositeOperation;
+                
+                if (shape.glow) {
+                    ctx.globalCompositeOperation = 'lighter';
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = shape.color;
+                }
+                
+                ctx.font = `${shape.lineWidth * 5}px 'Press Start 2P', cursive`;
+                ctx.fillStyle = shape.color;
+                ctx.fillText(shape.text, shape.startX, shape.startY);
+                
+                ctx.globalCompositeOperation = originalOperation;
+                ctx.shadowBlur = 0;
+            }
+            
+            function drawStar(cx, cy, radius, points, shape) {
+                drawStarOnCtx(ctx, cx, cy, radius, points, shape, false);
+            }
+            
+            function drawStarOnCtx(ctx, cx, cy, radius, points, shape, isPreview) {
+                ctx.beginPath();
+                const outerRadius = radius;
+                const innerRadius = radius * 0.5;
+                const step = Math.PI * 2 / points;
+                let angle = -Math.PI / 2;
+                
+                for (let i = 0; i < points * 2; i++) {
+                    const r = i % 2 === 0 ? outerRadius : innerRadius;
+                    const x = cx + Math.cos(angle) * r;
+                    const y = cy + Math.sin(angle) * r;
+                    
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                    
+                    angle += step;
+                }
+                
+                ctx.closePath();
+                
+                if (shape.fill !== 'none' && !isPreview) {
+                    ctx.fill();
+                }
+                ctx.stroke();
+            }
+            
+            function startSpray(e) {
+                sprayInterval = setInterval(() => {
+                    if (!isDrawing) return;
+                    
+                    const radius = ctx.lineWidth * 2;
+                    const points = ctx.lineWidth * 5;
+                    const color = rainbowMode ? getRainbowColor() : ctx.strokeStyle;
+                    
+                    ctx.fillStyle = color;
+                    
+                    for (let i = 0; i < points; i++) {
+                        const angle = Math.random() * Math.PI * 2;
+                        const distance = Math.random() * radius;
+                        const x = e.offsetX + Math.cos(angle) * distance;
+                        const y = e.offsetY + Math.sin(angle) * distance;
+                        const size = Math.random() * 3 + 1;
+                        
+                        ctx.beginPath();
+                        ctx.arc(x, y, size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }, 30);
+            }
+            
+            function stopSpray() {
+                if (sprayInterval) {
+                    clearInterval(sprayInterval);
+                    sprayInterval = null;
+                    saveState();
+                }
+            }
+            
+            function createPattern(color) {
+                const patternCanvas = document.createElement('canvas');
+                patternCanvas.width = 20;
+                patternCanvas.height = 20;
+                const patternCtx = patternCanvas.getContext('2d');
+                
+                patternCtx.strokeStyle = color;
+                patternCtx.lineWidth = 2;
+                
+                // Diseño de patrón neon
+                patternCtx.beginPath();
+                patternCtx.moveTo(0, 0);
+                patternCtx.lineTo(20, 20);
+                patternCtx.moveTo(20, 0);
+                patternCtx.lineTo(0, 20);
+                patternCtx.stroke();
+                
+                return ctx.createPattern(patternCanvas, 'repeat');
+            }
+            
+            // Funciones de herramientas especiales
+            function undoLastAction() {
+                if (shapes.length > 0) {
+                    shapes.pop();
+                    redrawShapes();
+                    saveState();
+                }
+            }
+            
+            function toggleRainbowMode() {
+                rainbowMode = !rainbowMode;
+                document.getElementById('rainbowTool').classList.toggle('active', rainbowMode);
+            }
+            
+            function toggleGlowMode() {
+                glowMode = !glowMode;
+                document.getElementById('glowTool').classList.toggle('active', glowMode);
+            }
+            
+            function clearCurrentLayer() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                redrawShapes();
+                saveState();
+            }
+            
+            function getRainbowColor() {
+                const hue = (Date.now() / 50) % 360;
+                return `hsl(${hue}, 100%, 50%)`;
+            }
+            
+            function saveState() {
+                // Guardar el estado actual en el historial (limitado a 50 estados)
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                history.push(imageData);
+                if (history.length > 50) {
+                    history.shift();
+                }
+            }
+            
+            function redrawShapes() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                if (history.length > 0) {
+                    ctx.putImageData(history[history.length - 1], 0, 0);
+                }
+            }
+            
+            // Crear partículas de fondo
+            function createParticles() {
+                const colors = ['#ff2ced', '#0af2ff', '#00ff9d', '#fff700', '#9d00ff'];
+                
+                for (let i = 0; i < 30; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    
+                    // Tamaño aleatorio
+                    const size = Math.random() * 10 + 5;
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    
+                    // Posición aleatoria
+                    particle.style.left = `${Math.random() * 100}%`;
+                    particle.style.top = `${Math.random() * 100}%`;
+                    
+                    // Color aleatorio
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    particle.style.background = `radial-gradient(circle, ${color} 0%, rgba(255,255,255,0) 70%)`;
+                    
+                    // Animación con retraso aleatorio
+                    particle.style.animationDelay = `${Math.random() * 15}s`;
+                    particle.style.animationDuration = `${Math.random() * 15 + 10}s`;
+                    
+                    bgEffects.appendChild(particle);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

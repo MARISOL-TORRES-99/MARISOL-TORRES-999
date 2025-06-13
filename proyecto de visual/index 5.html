@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus | Proyectos Funcionales</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Orbitron:wght@400;500&display=swap');
+        
+        :root {
+            --primary: #6e00ff;
+            --secondary: #ff00c1;
+            --accent: #00f7ff;
+            --bg-dark: #0f0f1a;
+            --bg-light: #1a1a2e;
+            --text: #e0e0ff;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text);
+            overflow-x: hidden;
+            background: radial-gradient(circle at 75% 30%, var(--bg-light) 0%, var(--bg-dark) 60%);
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(30, 30, 60, 0.7);
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 100;
+            box-shadow: 0 0 15px rgba(110, 0, 255, 0.5);
+        }
+        
+        .back-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 25px rgba(110, 0, 255, 0.8);
+        }
+        
+        .back-btn::before {
+            content: "←";
+            color: var(--accent);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            margin: 0;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(110, 0, 255, 0.3);
+            letter-spacing: 2px;
+        }
+        
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .project-card {
+            background: rgba(30, 30, 60, 0.5);
+            border-radius: 15px;
+            padding: 2rem;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(110, 0, 255, 0.2);
+            backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .project-card::before {
+            content: "";
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary), var(--accent));
+            z-index: -1;
+            border-radius: 16px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .project-card:hover::before {
+            opacity: 0.3;
+        }
+        
+        .project-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent);
+            margin-top: 0;
+            font-size: 1.5rem;
+        }
+        
+        .demo-container {
+            flex-grow: 1;
+            margin: 1rem 0;
+            border-radius: 10px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(110, 0, 255, 0.1);
+        }
+        
+        .project-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: auto;
+        }
+        
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 30px;
+            border: none;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            text-align: center;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        /* Estilos específicos para las demos */
+        .sketch-container {
+            width: 100%;
+            height: 250px;
+            position: relative;
+        }
+        
+        .color-picker-demo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem;
+        }
+        
+        .color-display {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 1rem 0;
+            border: 3px solid white;
+            transition: background 0.3s ease;
+        }
+        
+        .video-player {
+            width: 100%;
+            height: 200px;
+            background: #000;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .video-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .video-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        /* Estilos para el modal de código */
+        .code-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--bg-light);
+            border-radius: 15px;
+            width: 80%;
+            max-width: 800px;
+            max-height: 80vh;
+            padding: 2rem;
+            position: relative;
+            border: 1px solid var(--primary);
+            box-shadow: 0 0 30px rgba(110, 0, 255, 0.5);
+            overflow: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent);
+            margin: 0;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--accent);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .close-modal:hover {
+            transform: rotate(90deg);
+        }
+
+        pre {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            border: 1px solid rgba(110, 0, 255, 0.2);
+        }
+
+        code {
+            color: #f8f8f2;
+            line-height: 1.5;
+        }
+
+        .language-javascript {
+            color: #f8f8f2;
+        }
+
+        .token.comment {
+            color: #6272a4;
+        }
+
+        .token.keyword {
+            color: #ff79c6;
+        }
+
+        .token.function {
+            color: #50fa7b;
+        }
+
+        .token.string {
+            color: #f1fa8c;
+        }
+
+        .token.number {
+            color: #bd93f9;
+        }
+
+        .token.operator {
+            color: #ff79c6;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles-js"></div>
+    
+    <div class="container">
+        <div class="back-btn" onclick="history.back()"></div>
+        
+        <header>
+            <h1>Proyectos Funcionales</h1>
+            <p class="subtitle">Demostraciones interactivas de proyectos reales desarrollados</p>
+        </header>
+        
+        <main>
+            <div class="projects-grid">
+                <!-- Proyecto 1: Animación 2D interactiva -->
+                <div class="project-card">
+                    <h3>Animación 2D Interactiva</h3>
+                    <p>Experiencia de animación con Canvas API que responde a interacción del usuario</p>
+                    
+                    <div class="demo-container sketch-container">
+                        <canvas id="sketchCanvas" width="300" height="250"></canvas>
+                    </div>
+                    
+                    <div class="project-actions">
+                        <button class="btn btn-primary view-code-btn" data-code="animation-code">Ver código</button>
+                        <a href="#" class="btn btn-secondary">Explorar más</a>
+                    </div>
+                </div>
+                
+                <!-- Proyecto 2: Editor de color -->
+                <div class="project-card">
+                    <h3>Editor de Color Avanzado</h3>
+                    <p>Selector de color con HSL y preview en tiempo real</p>
+                    
+                    <div class="demo-container color-picker-demo">
+                        <div class="color-display" id="colorDisplay"></div>
+                        <input type="range" id="hueSlider" min="0" max="360" value="180" class="slider">
+                        <input type="range" id="saturationSlider" min="0" max="100" value="50" class="slider">
+                        <input type="range" id="lightnessSlider" min="0" max="100" value="50" class="slider">
+                    </div>
+                    
+                    <div class="project-actions">
+                        <button class="btn btn-primary view-code-btn" data-code="colorpicker-code">Ver código</button>
+                        <a href="#" class="btn btn-secondary">Explorar más</a>
+                    </div>
+                </div>
+                
+                <!-- Proyecto 3: Reproductor de video -->
+                <div class="project-card">
+                    <h3>Reproductor Video Educativo</h3>
+                    <p>Interfaz personalizada para contenido educativo con controles custom</p>
+                    
+                    <div class="demo-container">
+                        <div class="video-player" id="videoPlayer">
+                            <video id="eduVideo" width="100%" height="100%" style="display:none;">
+                                <source src="https://samplelib.com/lib/preview/mp4/sample-5s.mp4" type="video/mp4">
+                            </video>
+                            <div id="videoPlaceholder" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#000;">
+                                <button id="playBtn" style="background:var(--primary); border:none; color:white; padding:10px 20px; border-radius:5px; cursor:pointer;">Play Video</button>
+                            </div>
+                        </div>
+                        <div class="video-controls">
+                            <button class="video-btn" id="rewindBtn">⏪</button>
+                            <button class="video-btn" id="playPauseBtn">▶️</button>
+                            <button class="video-btn" id="forwardBtn">⏩</button>
+                        </div>
+                    </div>
+                    
+                    <div class="project-actions">
+                        <button class="btn btn-primary view-code-btn" data-code="videoplayer-code">Ver código</button>
+                        <a href="#" class="btn btn-secondary">Explorar más</a>
+                    </div>
+                </div>
+                
+                <!-- Proyecto 4: Calculadora interactiva -->
+                <div class="project-card">
+                    <h3>Calculadora Interactiva</h3>
+                    <p>Calculadora funcional con operaciones básicas y diseño innovador</p>
+                    
+                    <div class="demo-container" style="padding:1rem;">
+                        <div id="calculator">
+                            <div style="background:rgba(0,0,0,0.2); padding:10px; border-radius:5px; margin-bottom:10px; text-align:right; font-family:'Orbitron', sans-serif;" id="calcDisplay">0</div>
+                            <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:5px;">
+                                <button class="calc-btn">7</button>
+                                <button class="calc-btn">8</button>
+                                <button class="calc-btn">9</button>
+                                <button class="calc-btn op-btn">+</button>
+                                <button class="calc-btn">4</button>
+                                <button class="calc-btn">5</button>
+                                <button class="calc-btn">6</button>
+                                <button class="calc-btn op-btn">-</button>
+                                <button class="calc-btn">1</button>
+                                <button class="calc-btn">2</button>
+                                <button class="calc-btn">3</button>
+                                <button class="calc-btn op-btn">×</button>
+                                <button class="calc-btn">0</button>
+                                <button class="calc-btn">.</button>
+                                <button class="calc-btn" style="grid-column:span 2;">=</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-actions">
+                        <button class="btn btn-primary view-code-btn" data-code="calculator-code">Ver código</button>
+                        <a href="#" class="btn btn-secondary">Explorar más</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal para mostrar el código -->
+    <div class="code-modal" id="codeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Código del Proyecto</h3>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <pre><code id="codeContent"></code></pre>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // Códigos de los proyectos
+        const projectCodes = {
+            'animation-code': `// Animación 2D con Canvas
+const canvas = document.getElementById('sketchCanvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+const particleCount = 30;
+
+canvas.width = canvas.offsetWidth;
+canvas.height = canvas.offsetHeight;
+
+class Particle {
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 5 + 2;
+        this.speedX = Math.random() * 3 - 1.5;
+        this.speedY = Math.random() * 3 - 1.5;
+        this.color = \`hsl(\${Math.random() * 360}, 70%, 50%)\`;
+    }
+    
+    update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+    }
+    
+    draw() {
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+function init() {
+    particles = [];
+    for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+    }
+}
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+        
+        for (let j = i; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < 100) {
+                ctx.strokeStyle = \`rgba(110, 0, 255, \${1 - distance/100})\`;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(particles[i].x, particles[i].y);
+                ctx.lineTo(particles[j].x, particles[j].y);
+                ctx.stroke();
+            }
+        }
+    }
+    
+    requestAnimationFrame(animate);
+}
+
+canvas.addEventListener('mousemove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    
+    for (let i = 0; i < 3; i++) {
+        particles.push(new Particle());
+        particles[particles.length-1].x = mouseX;
+        particles[particles.length-1].y = mouseY;
+    }
+    
+    if (particles.length > 100) {
+        particles = particles.slice(particles.length - 100);
+    }
+});
+
+init();
+animate();
+
+window.addEventListener('resize', () => {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+});`,
+
+            'colorpicker-code': `// Selector de color HSL
+const hueSlider = document.getElementById('hueSlider');
+const saturationSlider = document.getElementById('saturationSlider');
+const lightnessSlider = document.getElementById('lightnessSlider');
+const colorDisplay = document.getElementById('colorDisplay');
+
+function updateColor() {
+    const hue = hueSlider.value;
+    const saturation = saturationSlider.value;
+    const lightness = lightnessSlider.value;
+    
+    colorDisplay.style.background = \`hsl(\${hue}, \${saturation}%, \${lightness}%)\`;
+    colorDisplay.style.boxShadow = \`0 0 20px hsl(\${hue}, \${saturation}%, \${lightness}%)\`;
+}
+
+hueSlider.addEventListener('input', updateColor);
+saturationSlider.addEventListener('input', updateColor);
+lightnessSlider.addEventListener('input', updateColor);
+
+updateColor();`,
+
+            'videoplayer-code': `// Reproductor de video personalizado
+const video = document.getElementById('eduVideo');
+const playBtn = document.getElementById('playBtn');
+const playPauseBtn = document.getElementById('playPauseBtn');
+const rewindBtn = document.getElementById('rewindBtn');
+const forwardBtn = document.getElementById('forwardBtn');
+const videoPlaceholder = document.getElementById('videoPlaceholder');
+
+playBtn.addEventListener('click', () => {
+    videoPlaceholder.style.display = 'none';
+    video.style.display = 'block';
+    video.play();
+});
+
+playPauseBtn.addEventListener('click', () => {
+    if (video.paused) {
+        video.play();
+        playPauseBtn.textContent = '⏸';
+    } else {
+        video.pause();
+        playPauseBtn.textContent = '▶️';
+    }
+});
+
+rewindBtn.addEventListener('click', () => {
+    video.currentTime -= 5;
+});
+
+forwardBtn.addEventListener('click', () => {
+    video.currentTime += 5;
+});`,
+
+            'calculator-code': `// Calculadora interactiva
+const calcDisplay = document.getElementById('calcDisplay');
+const calcBtns = document.querySelectorAll('.calc-btn');
+
+let currentInput = '0';
+let previousInput = '';
+let operation = null;
+let resetInput = false;
+
+function updateDisplay() {
+    calcDisplay.textContent = currentInput;
+}
+
+calcBtns.forEach(button => {
+    button.addEventListener('click', () => {
+        const value = button.textContent;
+        
+        if (value >= '0' && value <= '9') {
+            if (currentInput === '0' || resetInput) {
+                currentInput = value;
+                resetInput = false;
+            } else {
+                currentInput += value;
+            }
+        } else if (value === '.') {
+            if (!currentInput.includes('.')) {
+                currentInput += '.';
+            }
+        } else if (value === '=') {
+            if (operation && previousInput) {
+                currentInput = calculate(parseFloat(previousInput), parseFloat(currentInput), operation);
+                operation = null;
+                previousInput = '';
+                resetInput = true;
+            }
+        } else {
+            // Operaciones
+            if (previousInput && currentInput && operation) {
+                previousInput = calculate(parseFloat(previousInput), parseFloat(currentInput), operation);
+                currentInput = '0';
+            } else {
+                previousInput = currentInput;
+                currentInput = '0';
+            }
+            operation = value === '×' ? '*' : value;
+            resetInput = true;
+        }
+        
+        updateDisplay();
+    });
+});
+
+function calculate(a, b, op) {
+    switch(op) {
+        case '+': return (a + b).toString();
+        case '-': return (a - b).toString();
+        case '*': return (a * b).toString();
+        case '/': return (a / b).toString();
+        default: return b.toString();
+    }
+}`
+        };
+
+        // Inicialización de partículas
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof particlesJS !== 'undefined') {
+                particlesJS('particles-js', {
+                    "particles": {
+                        "number": {
+                            "value": 60,
+                            "density": {
+                                "enable": true,
+                                "value_area": 800
+                            }
+                        },
+                        "color": {
+                            "value": ["#6e00ff", "#ff00c1", "#00f7ff"]
+                        },
+                        "shape": {
+                            "type": "circle",
+                            "stroke": {
+                                "width": 0,
+                                "color": "#000000"
+                            }
+                        },
+                        "opacity": {
+                            "value": 0.5,
+                            "random": true,
+                            "anim": {
+                                "enable": true,
+                                "speed": 1,
+                                "opacity_min": 0.1,
+                                "sync": false
+                            }
+                        },
+                        "size": {
+                            "value": 3,
+                            "random": true,
+                            "anim": {
+                                "enable": true,
+                                "speed": 2,
+                                "size_min": 0.1,
+                                "sync": false
+                            }
+                        },
+                        "line_linked": {
+                            "enable": true,
+                            "distance": 150,
+                            "color": "#6e00ff",
+                            "opacity": 0.3,
+                            "width": 1
+                        },
+                        "move": {
+                            "enable": true,
+                            "speed": 1,
+                            "direction": "none",
+                            "random": true,
+                            "straight": false,
+                            "out_mode": "out",
+                            "bounce": false,
+                            "attract": {
+                                "enable": true,
+                                "rotateX": 600,
+                                "rotateY": 1200
+                            }
+                        }
+                    },
+                    "interactivity": {
+                        "detect_on": "canvas",
+                        "events": {
+                            "onhover": {
+                                "enable": true,
+                                "mode": "grab"
+                            },
+                            "onclick": {
+                                "enable": true,
+                                "mode": "push"
+                            },
+                            "resize": true
+                        },
+                        "modes": {
+                            "grab": {
+                                "distance": 140,
+                                "line_linked": {
+                                    "opacity": 0.8
+                                }
+                            },
+                            "push": {
+                                "particles_nb": 4
+                            }
+                        }
+                    },
+                    "retina_detect": true
+                });
+            }
+            
+            // Demo 1: Animación 2D con Canvas
+            const canvas = document.getElementById('sketchCanvas');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                let particles = [];
+                const particleCount = 30;
+                
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+                
+                class Particle {
+                    constructor() {
+                        this.x = Math.random() * canvas.width;
+                        this.y = Math.random() * canvas.height;
+                        this.size = Math.random() * 5 + 2;
+                        this.speedX = Math.random() * 3 - 1.5;
+                        this.speedY = Math.random() * 3 - 1.5;
+                        this.color = `hsl(${Math.random() * 360}, 70%, 50%)`;
+                    }
+                    
+                    update() {
+                        this.x += this.speedX;
+                        this.y += this.speedY;
+                        
+                        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+                    }
+                    
+                    draw() {
+                        ctx.fillStyle = this.color;
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+                
+                function init() {
+                    particles = [];
+                    for (let i = 0; i < particleCount; i++) {
+                        particles.push(new Particle());
+                    }
+                }
+                
+                function animate() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    for (let i = 0; i < particles.length; i++) {
+                        particles[i].update();
+                        particles[i].draw();
+                        
+                        for (let j = i; j < particles.length; j++) {
+                            const dx = particles[i].x - particles[j].x;
+                            const dy = particles[i].y - particles[j].y;
+                            const distance = Math.sqrt(dx * dx + dy * dy);
+                            
+                            if (distance < 100) {
+                                ctx.strokeStyle = `rgba(110, 0, 255, ${1 - distance/100})`;
+                                ctx.lineWidth = 1;
+                                ctx.beginPath();
+                                ctx.moveTo(particles[i].x, particles[i].y);
+                                ctx.lineTo(particles[j].x, particles[j].y);
+                                ctx.stroke();
+                            }
+                        }
+                    }
+                    
+                    requestAnimationFrame(animate);
+                }
+                
+                canvas.addEventListener('mousemove', (e) => {
+                    const rect = canvas.getBoundingClientRect();
+                    const mouseX = e.clientX - rect.left;
+                    const mouseY = e.clientY - rect.top;
+                    
+                    for (let i = 0; i < 3; i++) {
+                        particles.push(new Particle());
+                        particles[particles.length-1].x = mouseX;
+                        particles[particles.length-1].y = mouseY;
+                    }
+                    
+                    if (particles.length > 100) {
+                        particles = particles.slice(particles.length - 100);
+                    }
+                });
+                
+                init();
+                animate();
+                
+                window.addEventListener('resize', () => {
+                    canvas.width = canvas.offsetWidth;
+                    canvas.height = canvas.offsetHeight;
+                });
+            }
+            
+            // Demo 2: Selector de color
+            const hueSlider = document.getElementById('hueSlider');
+            const saturationSlider = document.getElementById('saturationSlider');
+            const lightnessSlider = document.getElementById('lightnessSlider');
+            const colorDisplay = document.getElementById('colorDisplay');
+            
+            if (hueSlider && saturationSlider && lightnessSlider && colorDisplay) {
+                function updateColor() {
+                    const hue = hueSlider.value;
+                    const saturation = saturationSlider.value;
+                    const lightness = lightnessSlider.value;
+                    
+                    colorDisplay.style.background = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+                    colorDisplay.style.boxShadow = `0 0 20px hsl(${hue}, ${saturation}%, ${lightness}%)`;
+                }
+                
+                hueSlider.addEventListener('input', updateColor);
+                saturationSlider.addEventListener('input', updateColor);
+                lightnessSlider.addEventListener('input', updateColor);
+                
+                updateColor();
+            }
+            
+            // Demo 3: Reproductor de video
+            const video = document.getElementById('eduVideo');
+            const playBtn = document.getElementById('playBtn');
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            const rewindBtn = document.getElementById('rewindBtn');
+            const forwardBtn = document.getElementById('forwardBtn');
+            const videoPlaceholder = document.getElementById('videoPlaceholder');
+            
+            if (video && playBtn) {
+                playBtn.addEventListener('click', () => {
+                    videoPlaceholder.style.display = 'none';
+                    video.style.display = 'block';
+                    video.play();
+                });
+                
+                playPauseBtn.addEventListener('click', () => {
+                    if (video.paused) {
+                        video.play();
+                        playPauseBtn.textContent = '⏸';
+                    } else {
+                        video.pause();
+                        playPauseBtn.textContent = '▶️';
+                    }
+                });
+                
+                rewindBtn.addEventListener('click', () => {
+                    video.currentTime -= 5;
+                });
+                
+                forwardBtn.addEventListener('click', () => {
+                    video.currentTime += 5;
+                });
+            }
+            
+            // Demo 4: Calculadora
+            const calcDisplay = document.getElementById('calcDisplay');
+            const calcBtns = document.querySelectorAll('.calc-btn');
+            
+            if (calcDisplay && calcBtns.length > 0) {
+                let currentInput = '0';
+                let previousInput = '';
+                let operation = null;
+                let resetInput = false;
+                
+                function updateDisplay() {
+                    calcDisplay.textContent = currentInput;
+                }
+                
+                calcBtns.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const value = button.textContent;
+                        
+                        if (value >= '0' && value <= '9') {
+                            if (currentInput === '0' || resetInput) {
+                                currentInput = value;
+                                resetInput = false;
+                            } else {
+                                currentInput += value;
+                            }
+                        } else if (value === '.') {
+                            if (!currentInput.includes('.')) {
+                                currentInput += '.';
+                            }
+                        } else if (value === '=') {
+                            if (operation && previousInput) {
+                                currentInput = calculate(parseFloat(previousInput), parseFloat(currentInput), operation);
+                                operation = null;
+                                previousInput = '';
+                                resetInput = true;
+                            }
+                        } else {
+                            // Operaciones
+                            if (previousInput && currentInput && operation) {
+                                previousInput = calculate(parseFloat(previousInput), parseFloat(currentInput), operation);
+                                currentInput = '0';
+                            } else {
+                                previousInput = currentInput;
+                                currentInput = '0';
+                            }
+                            operation = value === '×' ? '*' : value;
+                            resetInput = true;
+                        }
+                        
+                        updateDisplay();
+                    });
+                });
+                
+                function calculate(a, b, op) {
+                    switch(op) {
+                        case '+': return (a + b).toString();
+                        case '-': return (a - b).toString();
+                        case '*': return (a * b).toString();
+                        case '/': return (a / b).toString();
+                        default: return b.toString();
+                    }
+                }
+            }
+
+            // Manejo del modal de código
+            const codeModal = document.getElementById('codeModal');
+            const closeModal = document.getElementById('closeModal');
+            const codeContent = document.getElementById('codeContent');
+            const modalTitle = document.getElementById('modalTitle');
+            const viewCodeBtns = document.querySelectorAll('.view-code-btn');
+
+            // Función para abrir el modal con el código correspondiente
+            function openCodeModal(codeId) {
+                if (projectCodes[codeId]) {
+                    codeContent.innerHTML = projectCodes[codeId];
+                    
+                    // Establecer el título según el proyecto
+                    const projectTitles = {
+                        'animation-code': 'Animación 2D Interactiva',
+                        'colorpicker-code': 'Editor de Color Avanzado',
+                        'videoplayer-code': 'Reproductor Video Educativo',
+                        'calculator-code': 'Calculadora Interactiva'
+                    };
+                    
+                    modalTitle.textContent = `Código: ${projectTitles[codeId]}`;
+                    codeModal.style.display = 'flex';
+                }
+            }
+
+            // Asignar eventos a los botones "Ver código"
+            viewCodeBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const codeId = btn.getAttribute('data-code');
+                    openCodeModal(codeId);
+                });
+            });
+
+            // Cerrar modal al hacer clic en la X
+            closeModal.addEventListener('click', () => {
+                codeModal.style.display = 'none';
+            });
+
+            // Cerrar modal al hacer clic fuera del contenido
+            codeModal.addEventListener('click', (e) => {
+                if (e.target === codeModal) {
+                    codeModal.style.display = 'none';
+                }
+            });
+
+            // Cerrar modal con la tecla Escape
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && codeModal.style.display === 'flex') {
+                    codeModal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

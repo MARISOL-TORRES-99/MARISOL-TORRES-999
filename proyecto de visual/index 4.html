@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curso Técnico - Diseño Web y Multimedia</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #1b90dd;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #2ecc71;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+     
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo img {
+            height: 50px;
+            margin-right: 15px;
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        /* Navigation */
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 20px;
+            position: relative;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 15px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        nav ul li a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        nav ul li.active a {
+            background-color: var(--accent-color);
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: url('https://digitalmarketing.gt/wp-content/uploads/2021/05/Pagina-web-Guatemala.jpg') no-repeat center center/cover;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            color: white;
+            text-align: center;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+        }
+        
+        .hero h2 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            animation: fadeInDown 1s ease;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            animation: fadeInUp 1s ease;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.6);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid white;
+            margin-left: 15px;
+        }
+        
+        .btn-outline:hover {
+            background-color: white;
+            color: var(--primary-color);
+        }
+        
+        /* Main Content */
+        main {
+            padding: 60px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            display: inline-block;
+            padding-bottom: 15px;
+        }
+        
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 4px;
+            background-color: var(--secondary-color);
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+        
+        /* Units Section */
+        .units {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        
+        .unit-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .unit-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .unit-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .unit-content {
+            padding: 25px;
+        }
+        
+        .unit-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .unit-content ul {
+            list-style-position: inside;
+            margin-bottom: 20px;
+        }
+        
+        .unit-content ul li {
+            margin-bottom: 8px;
+            color: #666;
+        }
+        
+        /* Games Section */
+        .games-section {
+            background-color: var(--light-color);
+            padding: 60px 0;
+        }
+        
+        .games-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+        
+        .game-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .game-icon {
+            font-size: 3rem;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+        }
+        
+        .game-card h3 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        /* Videos Section */
+        .videos-section {
+            padding: 60px 0;
+            background-color: white;
+        }
+        
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .video-card {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .video-thumbnail {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+        }
+        
+        .video-thumbnail img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background-color: rgba(231, 76, 60, 0.8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .play-button:hover {
+            background-color: var(--accent-color);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+        
+        .play-button::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 0;
+            border-top: 15px solid transparent;
+            border-bottom: 15px solid transparent;
+            border-left: 25px solid white;
+            margin-left: 5px;
+        }
+        
+        .video-info {
+            padding: 20px;
+            background-color: white;
+        }
+        
+        .video-info h3 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 60px 0 20px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 2px;
+            background-color: var(--secondary-color);
+        }
+        
+        .footer-column p {
+            margin-bottom: 15px;
+            color: #bbb;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: #bbb;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--secondary-color);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #bbb;
+            font-size: 0.9rem;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            width: 80%;
+            max-width: 900px;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            color: white;
+            cursor: pointer;
+            z-index: 1;
+            background-color: rgba(0, 0, 0, 0.5);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+        }
+        
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav ul {
+                margin-top: 20px;
+                justify-content: center;
+            }
+            
+            nav ul li {
+                margin: 0 10px;
+            }
+            
+            .hero h2 {
+                font-size: 2.2rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .btn-group {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .btn-outline {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <img src="https://soportetecnicosam.wordpress.com/wp-content/uploads/2022/10/sello-del-colegio-1.png?w=220" alt="Logo del Colegio" class="logo" width="100" height="300">
+                <h1>Bachillerato Técnico en Informática U.E.M.S.F.Q</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li class="active"><a href="#inicio">Inicio</a></li>
+                    <li><a href="#unidades">Unidades</a></li>
+                    <li><a href="#juegos">Juegos</a></li>
+                    <li><a href="#videos">Videos</a></li>
+                    <li><a href="#contacto">Contacto</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+
+    <!-- Hero Section -->
+    <section class="hero" id="inicio">
+        <div class="container hero-content">
+            <h2>Contenido de Diseño Web 2do de Bachillerato Técnico </h2>
+            <p>Domina las tecnologías fundamentales para crear experiencias digitales impactantes. Aprende HTML, CSS, animación 2D/3D, edición de video y más con nuestro curso técnico especializado.</p>
+            <div class="btn-group">
+                <a href="#unidades" class="btn">Comenzar Aprendizaje</a>
+                <a href="#juegos" class="btn btn-outline">Juegos Educativos</a>
+            </div>
+        </div>
+    </section>
+
+    <main>
+   
+        <section id="unidades">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Unidades del Curso</h2>
+                </div>
+                
+                <div class="units">
+                   
+                    <div class="unit-card">
+                        <img src="https://images.unsplash.com/photo-1547658719-da2b51169166?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="HTML">
+                        <div class="unit-content">
+                            <h3>UNIDAD 1 - HTML</h3>
+                            <ul>
+                                <li>¿Qué es HTML?</li>
+                                <li>¿Internet y la Web son lo mismo?</li>
+                                <li>Página Web</li>
+                                <li>Web Estática</li>
+                                <li>Web Dinámica</li>
+                                <li>Url(Uniform Resource Locators)</li>
+                                <li>Navegador Web</li>
+                                <li>Buscador</li>
+                                <li>Codificación HTML</li>
+                                <LI>Hipertexto</LI>
+                                <li>Link</li>
+                                <li>¿Cómo Codificamos HTML?</li>
+                                <li>Estructura Básica Del Código HTML</li>
+                                <LI>Estructura de Código</LI>
+                                <li>Tipos de Etiquetas</li>
+                                <li>Etiquetas de Encabezado</li>
+                                <li>Etiquetas de Sección</li>
+                                <li>Hojas de Estilo-CSS</li>
+                                <li>Selectores</li>
+                                <li>Atributos</li>
+                                <li>Valores</li>
+                                <li>Primera Forma</li>
+                                <li>Segunda Forma</li>
+                                <li>Tercera Forma</li>
+                                <li>Propiedades de Texto</li>
+                                <li>Las Tipografías</li>
+                                <li>Tablas En Html</li>
+                                <li>Templates o Plantillas en HTML</li>
+                                <LI>Etiquetas  Iframe /Iframe</LI>
+                                <li>Hipervínculos Locales y Externos</li>
+                                <li>Ruta Absoluta</li>
+                                <li>Ruta Relativa</li>
+                                <li>Software de Edición de Sitios Web</li>
+                                <li>Publicador de sitios web</li>
+                                <li>Servidores</li>
+                                <li>Alojamiento y Publicación de Sitios Web</li>
+                                <li>Plataformas Web</li>
+                            </ul>
+                            <a href="unidad1.html" class="btn">Explorar Contenido</a>
+                        </div>
+                    </div>
+     
+                    <div class="unit-card">
+                        <img src="https://images.unsplash.com/photo-1551033406-611cf9a28f67?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Multimedia">
+                        <div class="unit-content">
+                            <h3>UNIDAD 2 - Herramientas Multimedia</h3>
+                            <ul>
+                                <li>Dibujo y Pintura</li>
+                                <li>Mapas de Bits</li>
+                                <li>Dibujo Vectoriales</li>
+                                <li>Formatos de Imégenes</li>
+                                <li>Animaciones 2D y 3D</li>
+                                <LI>Animaciones 2D</LI>
+                                <LI>Preproducción</LI>
+                                <li>Producción</li>
+                                <li>Postproducción</li>
+                                <li>Animación 3D</li>
+                                <li>Proceso de animación 3D</li>
+                                <li>Modelado</li>
+                                <li>Composición de escena y animación</li>
+                                <li>Técnicas de animación 3D que se pueden utilizar</li>
+                                <li>Técnica de Motion Design</li>
+                                <li>Técnicas de Stop Motion</li>
+                                <li>Técnicas de Hiperrealista</li>
+                                <li>Técnicas de  de Caricatura</li>
+                                <li>Edición de fotografía</li>
+                                <li>Herramientas de Trabajo por Capas</li>
+                                <li>Edición de Video no Lineal</li>
+                                <li>Software de Edición Gráfica y Edición de Sonido</li>
+                                <li>Adobe Premiere Pro</li>
+                                <li>Audacity</li>
+                                <li>Adobe Audition</li>
+                            </ul>
+                            <a href="unidad2.html" class="btn">Explorar Contenido</a>
+                        </div>
+                    </div>
+                    
+                   
+                    <div class="unit-card">
+                        <img src="https://images.unsplash.com/photo-1555774698-0b77e0d5fac6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Proyectos">
+                        <div class="unit-content">
+                            <h3>Proyectos Integradores</h3>
+                            <ul>
+                                <li>Desarrollo de sitios web completos</li>
+                                <li>Creación de animaciones 2D</li>
+                                <li>Producción de videos educativos</li>
+                                <li>Diseño de interfaces interactivas</li>
+                                <li>Portafolio profesional</li>
+                                <li>Publicación en plataformas web</li>
+                            </ul>
+                            <a href="Proyecto.html" class="btn">Ver Proyectos</a>
+                            <ul> <li>
+                                <a href="https://www.animaker.com/hub/2d-vs-3d-animation/">Animación 2D y 3D</a>
+                                <li><a href="https://creativecloud.adobe.com/es">Creative Cloud</a></li>
+                                <li><a href="https://wavacity.com/">Audacity</a></li>
+                                <li><a href="https://www.adobe.com/ec/products/audition.html?sdid=29NMCF2N&mv=search&mv2=paidsearch&ef_id=92b939e7a14b1eae363d51a1b05bb268:G:s&s_kwcid=AL!3085!10!79027608961027!!!!79028010915864!!506208851!1264440033059764&msclkid=92b939e7a14b1eae363d51a1b05bb268">Adobe Audition</a></li>
+                                <li><a href="https://filmora.wondershare.net/es/editor-de-video/ad-filmora.html?msclkid=907dfe47f51915cd280d9601e434e381&utm_source=bing&utm_medium=cpc&utm_campaign=Filmora_SS_%E5%A4%9A%E8%AF%AD%E8%A8%80_ES_Pid(7598)_H_Troas12.30&utm_term=editor%20de%20audio%20y%20video&utm_content=2.%20Generic-VE%20%5Beditor%20video%5D">Wondershare Filmora</a></li>
+                                <li><a href="https://gabrielserna.com/mi-blog/entry/clases-en-linea-tecnicas-de-hiperrealismo-aplicadas-al-dibujo">Técnicas de Hiperrealismo</a></li>
+                                <li><a href="https://definicion.de/mapa-de-bits/">Mapa de bits</a></li>
+                                <li><a href="https://psicologiaymente.com/psicologia/modelado">Modelado</a></li>
+                                <li><a href="https://desarrolloweb.com/articulos/tipos-tecnicas-animacion-3d">Tipos y técnicas de animación 3D
+</a></li>
+                                <li><a href="s://www.superprof.mx/blog/realizacion-caricatura-tecnicas/">Técnicas de de Caricatura</a></li>
+                                <li><a href="https://www.photopea.com/">Edición de fotografía</a></li>
+                                <li><a href="https://clipchamp.com/es/video-editor/">Edición de Video no Lineal</a></li>
+                                <li><a href="https://www.bing.com/search?q=que%20es%20produccion%20en%20diseño%20web&qs=n&form=QBRE&sp=-1&ghc=1&lq=0&pq=que%20es%20produccion%20en%20diseño%20web&sc=9-31&sk=&cvid=AFF2137B6C2D4980B4FA6294233212C5">Producción</a></li>
+                                <li><a href="https://codepen.io/">Codificación HTML</a></li>
+                                <li><a href="https://desarrolladoresweb.org/html/etiquetas-html/">Tipos de Etiquetas</a></li>
+                                <li><a href="https://roa.cedia.edu.ec/webappscode/130/montaje_y_edicin.html">Composición de escena y animación</a></li>
+                                
+                            </li></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="games-section" id="juegos">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Juegos Educativos</h2>
+                </div>
+                
+                
+                <div class="games-container">
+                    <div class="game-card">
+                        <div class="game-icon">🎮</div>
+                        <h3>Quiz de HTML</h3>
+                        <p>Pon a prueba tus conocimientos sobre etiquetas HTML y estructura web.</p>
+                        <a href="Juego.html" class="btn">Jugar Ahora</a>
+                    </div>
+                    
+                    <div class="game-card">
+                        <div class="game-icon">🖌️</div>
+                        <h3>Dibujo Vectorial</h3>
+                        <p>Crea tus propias ilustraciones con esta herramienta de dibujo digital.</p>
+                        <a href="Dibujo.html" class="btn">Explorar</a>
+                    </div>
+                    
+                    <div class="game-card">
+                        <div class="game-icon">🎬</div>
+                        <h3>Editor de Video</h3>
+                        <p>Aprende los conceptos básicos de edición no lineal con este simulador.</p>
+                        <a href="Editor.html" class="btn">Probar</a>
+                    </div>
+                    
+                    <div class="game-card">
+                        <div class="game-icon">🧩</div>
+                        <h3>Rompecabezas CSS</h3>
+                        <p>Arma las propiedades CSS correctas para diseñar elementos web.</p>
+                        <a href="rompecabezas.html" class="btn">Comenzar</a>
+                    </div>
+                     <div class="games-container">
+                    <div class="game-card">
+                        <div class="game-icon">🎮</div>
+                        <h3>RED HUNT</h3>
+                        <p>Atrapa los conceptos correctos sobre Internet y evita los errores comunes.</p>
+                        <a href="Juego 1.html" class="btn">Jugar Ahora</a>
+                    </div>
+                    
+                </div>
+            </div>
+        </section>
+        <ul><li>juagos</li></ul>
+        
+        <section class="videos-section" id="videos">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Videos Educativos</h2>
+                </div>
+                
+                <div class="video-grid">
+                    <div class="video-card">
+                        <div class="video-thumbnail">
+                            <img src="https://i.ytimg.com/vi/rbuYtrNUxg4/maxresdefault.jpg" alt="HTML Tutorial">
+                            <div class="play-button" onclick="openModal('https://www.youtube.com/embed/rbuYtrNUxg4')"></div>
+                        </div>
+                        <div class="video-info">
+                            <h3>Introducción a HTML5</h3>
+                            <p>Aprende los fundamentos de HTML5 en este completo tutorial para principiantes.</p>
+                        </div>
+                          <div class="video-card">
+                <div class="video-thumbnail">
+                    <img src="https://i.ytimg.com/vi/1Rs2ND1ryYc/maxresdefault.jpg" alt="Diseño Web Responsivo">
+                    <div class="play-button" onclick="openModal('https://www.youtube.com/embed/1Rs2ND1ryYc')"></div>
+                </div>
+                <div class="video-info">
+                    <h3>Diseño Web Responsivo</h3>
+                    <p>Cómo crear sitios web que se adapten a cualquier dispositivo.</p>
+                </div>
+            </div>
+            
+                    </div>
+                    
+                    <div class="video-card">
+                        <div class="video-thumbnail">
+                            <img src="https://i.ytimg.com/vi/wXUhTZpF_HQ/maxresdefault.jpg" alt="CSS Tutorial">
+                            <div class="play-button" onclick="openModal('https://www.youtube.com/embed/wXUhTZpF_HQ')"></div>
+                        </div>
+                        <div class="video-info">
+                            <h3>CSS Desde Cero</h3>
+                            <p>Domina las hojas de estilo en cascada y diseña páginas web profesionales.</p>
+                        </div>
+                                  
+            <div class="video-card">
+                <div class="video-thumbnail">
+                    <img src="https://i.ytimg.com/vi/KPoeNZZ6H4s/maxresdefault.jpg" alt="Adobe Premiere">
+                    <div class="play-button" onclick="openModal('https://www.youtube.com/embed/KPoeNZZ6H4s')"></div>
+                </div>
+                <div class="video-info">
+                    <h3>Edición de Video con Premiere</h3>
+                    <p>Tutorial completo de Adobe Premiere Pro para principiantes.</p>
+                </div>
+            </div>
+                    </div>
+                    
+                    <div class="video-card">
+                        <div class="video-thumbnail">
+                            <img src="https://i.ytimg.com/vi/5qap5aO4i9A/maxresdefault.jpg" alt="Animación 2D">
+                            <div class="play-button" onclick="openModal('https://www.youtube.com/embed/5qap5aO4i9A')"></div>
+                        </div>
+                        <div class="video-info">
+                            <h3>Animación 2D Principios</h3>
+                            <p>Los 12 principios básicos de animación aplicados en proyectos digitales.</p>
+                        </div>
+                         <div class="video-card">
+                <div class="video-thumbnail">
+                    <img src="https://i.ytimg.com/vi/8gNrZ4lAnAw/maxresdefault.jpg" alt="Animación 3D">
+                    <div class="play-button" onclick="openModal('https://www.youtube.com/embed/8gNrZ4lAnAw')"></div>
+                </div>
+                <div class="video-info">
+                    <h3>Introducción a Animación 3D</h3>
+                    <p>Conceptos básicos de modelado 3D y animación con Blender.</p>
+                </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="contacto">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Acerca del Curso</h3>
+                    <p>Programa técnico especializado en diseño y desarrollo web con herramientas multimedia para estudiantes de bachillerato.</p>
+                    <p>Desarrolla habilidades profesionales en tecnologías digitales modernas.</p>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Enlaces Rápidos</h3>
+                    <ul class="footer-links">
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#unidades">Unidades</a></li>
+                        <li><a href="#juegos">Juegos Educativos</a></li>
+                        <li><a href="#videos">Videos Tutoriales</a></li>
+                        <li><a href="#">Recursos Descargables</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Contacto</h3>
+                    <p>Email: sfqmarisolt@gmail.com</p>
+                    <p>Teléfono: +593 989570762</p>
+                    <p>Dirección: Guayllabamba A.v Simón Bolivar290 y A.v Olímpica</p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 | Bachillerato Técnico en Informática | Proyecto Educativo Interactivo</p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="modal" id="videoModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <div class="video-container">
+                <iframe id="videoFrame" src="" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    
+    <script>
+        
+        function openModal(videoUrl) {
+            document.getElementById('videoFrame').src = videoUrl;
+            document.getElementById('videoModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            document.getElementById('videoModal').style.display = 'none';
+            document.getElementById('videoFrame').src = '';
+            document.body.style.overflow = 'auto';
+        }
+        
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('videoModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+        
+       
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

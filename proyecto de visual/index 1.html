@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Edición No Lineal</title>
+    <style>
+        :root {
+            --neon-blue: #4dabf7;
+            --neon-pink: #f783ac;
+            --neon-purple: #9775fa;
+            --neon-green: #51cf66;
+            --dark-bg: #212529;
+            --darker-bg: #1a1e21;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--dark-bg);
+            color: #e9ecef;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 1px solid rgba(77, 171, 247, 0.2);
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin: 0;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple), var(--neon-pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(77, 171, 247, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #adb5bd;
+            margin-top: 10px;
+        }
+        
+        .back-button {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 10px 20px;
+            background-color: var(--darker-bg);
+            color: var(--neon-blue);
+            border: 1px solid var(--neon-blue);
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(77, 171, 247, 0.1);
+        }
+        
+        .back-button:hover {
+            background-color: var(--neon-blue);
+            color: var(--dark-bg);
+            box-shadow: 0 0 15px rgba(77, 171, 247, 0.5);
+        }
+        
+        .simulator-container {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .timeline-panel {
+            flex: 3;
+            background-color: var(--darker-bg);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(77, 171, 247, 0.1);
+        }
+        
+        .controls-panel {
+            flex: 1;
+            background-color: var(--darker-bg);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(247, 131, 172, 0.1);
+        }
+        
+        h2 {
+            color: var(--neon-green);
+            margin-top: 0;
+            border-bottom: 1px solid rgba(81, 207, 102, 0.2);
+            padding-bottom: 10px;
+        }
+        
+        .timeline {
+            height: 200px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .track {
+            height: 60px;
+            margin-bottom: 10px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+            position: relative;
+        }
+        
+        .track-label {
+            position: absolute;
+            left: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #adb5bd;
+            font-size: 0.8rem;
+            width: 60px;
+        }
+        
+        .track-content {
+            position: absolute;
+            left: 70px;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: nowrap;
+        }
+        
+        .clip {
+            height: 100%;
+            position: relative;
+            display: inline-block;
+            border-radius: 3px;
+            cursor: move;
+            user-select: none;
+            box-sizing: border-box;
+        }
+        
+        .clip.video {
+            background-color: rgba(77, 171, 247, 0.3);
+            border: 1px solid var(--neon-blue);
+        }
+        
+        .clip.audio {
+            background-color: rgba(247, 131, 172, 0.3);
+            border: 1px solid var(--neon-pink);
+        }
+        
+        .clip.text {
+            background-color: rgba(81, 207, 102, 0.3);
+            border: 1px solid var(--neon-green);
+        }
+        
+        .clip-title {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 2px 5px;
+            font-size: 0.7rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .clip-handle {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+            background-color: rgba(255, 255, 255, 0.3);
+            cursor: ew-resize;
+        }
+        
+        .clip-handle.left {
+            left: 0;
+        }
+        
+        .clip-handle.right {
+            right: 0;
+        }
+        
+        .playhead {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: white;
+            z-index: 10;
+            pointer-events: none;
+        }
+        
+        .playhead::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -5px;
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 10px solid white;
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .control-button {
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            background-color: rgba(151, 117, 250, 0.1);
+            color: var(--neon-purple);
+            border: 1px solid var(--neon-purple);
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .control-button:hover {
+            background-color: var(--neon-purple);
+            color: var(--dark-bg);
+            box-shadow: 0 0 15px rgba(151, 117, 250, 0.5);
+        }
+        
+        .preview-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: black;
+        }
+        
+        #video-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .preview-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .preview-time {
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+            color: white;
+            font-size: 0.8rem;
+            background-color: rgba(0,0,0,0.5);
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        
+        .tutorial-section {
+            background-color: var(--darker-bg);
+            border-radius: 8px;
+            padding: 25px;
+            margin-top: 40px;
+            border: 1px solid rgba(77, 171, 247, 0.1);
+        }
+        
+        .tutorial-step {
+            margin-bottom: 20px;
+            padding-left: 20px;
+            border-left: 3px solid var(--neon-blue);
+        }
+        
+        .tutorial-step h3 {
+            color: var(--neon-pink);
+            margin-top: 0;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #6c757d;
+            border-top: 1px solid rgba(77, 171, 247, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .simulator-container {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2rem;
+                padding-top: 30px;
+            }
+            
+            .back-button {
+                position: static;
+                transform: none;
+                margin-bottom: 20px;
+                display: inline-block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="#" class="back-button" onclick="history.back()">← Regresar</a>
+            <h1>Editor de Video</h1>
+            <p class="subtitle">Aprende los conceptos básicos de edición no lineal con este simulador interactivo</p>
+        </header>
+        
+        <div class="preview-container">
+            <video id="video-preview" controls></video>
+            <div class="preview-controls">
+                <button class="control-button" id="play-button">Reproducir</button>
+                <button class="control-button" id="pause-button">Pausa</button>
+                <input type="range" id="timeline-scrubber" min="0" max="100" value="0" style="flex-grow: 1;">
+            </div>
+            <div class="preview-time" id="preview-time">00:00 / 00:00</div>
+        </div>
+        
+        <div class="simulator-container">
+            <div class="timeline-panel">
+                <h2>Línea de tiempo</h2>
+                <div class="timeline">
+                    <div class="playhead" id="playhead" style="left: 0;"></div>
+                    
+                    <div class="track">
+                        <div class="track-label">Video 1</div>
+                        <div class="track-content" id="video-track-1">
+                            <!-- Clips de video se agregarán aquí -->
+                        </div>
+                    </div>
+                    
+                    <div class="track">
+                        <div class="track-label">Video 2</div>
+                        <div class="track-content" id="video-track-2">
+                            <!-- Clips de video se agregarán aquí -->
+                        </div>
+                    </div>
+                    
+                    <div class="track">
+                        <div class="track-label">Audio</div>
+                        <div class="track-content" id="audio-track">
+                            <!-- Clips de audio se agregarán aquí -->
+                        </div>
+                    </div>
+                    
+                    <div class="track">
+                        <div class="track-label">Texto</div>
+                        <div class="track-content" id="text-track">
+                            <!-- Clips de texto se agregarán aquí -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button class="control-button" id="cut-button">Cortar</button>
+                    <button class="control-button" id="split-button">Dividir</button>
+                    <button class="control-button" id="transition-button">Transición</button>
+                    <button class="control-button" id="effects-button">Efectos</button>
+                    <button class="control-button" id="speed-button">Velocidad</button>
+                    <button class="control-button" id="color-button">Color</button>
+                </div>
+            </div>
+            
+            <div class="controls-panel">
+                <h2>Controles</h2>
+                <div class="controls">
+                    <button class="control-button" id="add-video-button">Añadir video</button>
+                    <button class="control-button" id="add-audio-button">Añadir audio</button>
+                    <button class="control-button" id="add-text-button">Añadir texto</button>
+                    <button class="control-button" id="delete-button">Eliminar</button>
+                    <button class="control-button" id="zoom-in-button">Zoom +</button>
+                    <button class="control-button" id="zoom-out-button">Zoom -</button>
+                    <button class="control-button" id="export-button">Exportar</button>
+                    <button class="control-button" id="save-button">Guardar</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tutorial-section">
+            <h2>Conceptos Básicos de Edición No Lineal</h2>
+            
+            <div class="tutorial-step">
+                <h3>1. La línea de tiempo</h3>
+                <p>La línea de tiempo es donde organizas y editas tus clips de video, audio y gráficos. Puedes arrastrar y soltar elementos en cualquier orden. Arrastra los clips para moverlos y usa los controles en los bordes para ajustar su duración.</p>
+            </div>
+            
+            <div class="tutorial-step">
+                <h3>2. Edición no destructiva</h3>
+                <p>Los cambios que realizas no afectan a los archivos originales. Puedes experimentar libremente sin preocuparte por perder material. Usa el botón "Eliminar" para quitar clips seleccionados.</p>
+            </div>
+            
+            <div class="tutorial-step">
+                <h3>3. Capas y pistas</h3>
+                <p>Los elementos se apilan en capas. Los elementos superiores aparecen sobre los inferiores. Usa múltiples pistas para organizar tu proyecto. El video en la pista superior cubrirá el de las pistas inferiores.</p>
+            </div>
+            
+            <div class="tutorial-step">
+                <h3>4. Vista previa</h3>
+                <p>Usa los controles de reproducción para previsualizar tu edición. El cabezal de reproducción (línea roja) muestra la posición actual en la línea de tiempo.</p>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 Simulador de Edición No Lineal | Diseñado para aprender los fundamentos de edición de video</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Variables globales
+        let currentVideoTime = 0;
+        let totalVideoTime = 30; // Duración total del proyecto en segundos
+        let isPlaying = false;
+        let playInterval;
+        let selectedClip = null;
+        let timelineScale = 1; // Escala de la línea de tiempo
+        
+        // Elementos del DOM
+        const videoPreview = document.getElementById('video-preview');
+        const playButton = document.getElementById('play-button');
+        const pauseButton = document.getElementById('pause-button');
+        const timelineScrubber = document.getElementById('timeline-scrubber');
+        const previewTime = document.getElementById('preview-time');
+        const playhead = document.getElementById('playhead');
+        const videoTrack1 = document.getElementById('video-track-1');
+        const videoTrack2 = document.getElementById('video-track-2');
+        const audioTrack = document.getElementById('audio-track');
+        const textTrack = document.getElementById('text-track');
+        
+        // Botones de la línea de tiempo
+        const addVideoButton = document.getElementById('add-video-button');
+        const addAudioButton = document.getElementById('add-audio-button');
+        const addTextButton = document.getElementById('add-text-button');
+        const deleteButton = document.getElementById('delete-button');
+        const zoomInButton = document.getElementById('zoom-in-button');
+        const zoomOutButton = document.getElementById('zoom-out-button');
+        
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', () => {
+            // Crear clips de ejemplo
+            createClip('video-track-1', 'Video 1', 'video', 0, 10);
+            createClip('video-track-1', 'Video 2', 'video', 12, 8);
+            createClip('video-track-2', 'Video 3', 'video', 5, 6);
+            createClip('audio-track', 'Música', 'audio', 0, 20);
+            createClip('audio-track', 'Efecto', 'audio', 15, 3);
+            createClip('text-track', 'Título', 'text', 3, 5);
+            
+            // Configurar eventos
+            setupEventListeners();
+            
+            // Actualizar tiempo de vista previa
+            updatePreviewTime();
+        });
+        
+        function setupEventListeners() {
+            // Controles de reproducción
+            playButton.addEventListener('click', playVideo);
+            pauseButton.addEventListener('click', pauseVideo);
+            timelineScrubber.addEventListener('input', scrubTimeline);
+            
+            // Botones de la línea de tiempo
+            addVideoButton.addEventListener('click', () => addNewClip('video'));
+            addAudioButton.addEventListener('click', () => addNewClip('audio'));
+            addTextButton.addEventListener('click', () => addNewClip('text'));
+            deleteButton.addEventListener('click', deleteSelectedClip);
+            zoomInButton.addEventListener('click', () => zoomTimeline(1.2));
+            zoomOutButton.addEventListener('click', () => zoomTimeline(0.8));
+            
+            // Configurar eventos de arrastre para la línea de tiempo
+            setupDragEvents();
+        }
+        
+        function createClip(trackId, title, type, startTime, duration) {
+            const track = document.getElementById(trackId);
+            const clip = document.createElement('div');
+            clip.className = `clip ${type}`;
+            clip.dataset.type = type;
+            clip.dataset.start = startTime;
+            clip.dataset.duration = duration;
+            clip.dataset.end = startTime + duration;
+            
+            // Calcular posición y tamaño basado en el tiempo
+            const left = (startTime / totalVideoTime) * 100;
+            const width = (duration / totalVideoTime) * 100;
+            
+            clip.style.left = `${left}%`;
+            clip.style.width = `${width}%`;
+            
+            // Añadir controles de redimensionamiento
+            clip.innerHTML = `
+                <div class="clip-handle left"></div>
+                <div class="clip-handle right"></div>
+                <div class="clip-title">${title}</div>
+            `;
+            
+            // Seleccionar clip al hacer clic
+            clip.addEventListener('mousedown', (e) => {
+                if (e.target.classList.contains('clip-handle')) return;
+                
+                // Deseleccionar el clip anterior
+                if (selectedClip) {
+                    selectedClip.style.boxShadow = 'none';
+                }
+                
+                // Seleccionar el nuevo clip
+                selectedClip = clip;
+                clip.style.boxShadow = '0 0 0 2px var(--neon-purple)';
+                e.stopPropagation();
+            });
+            
+            track.appendChild(clip);
+            
+            // Configurar eventos de redimensionamiento
+            setupResizeHandles(clip);
+            
+            return clip;
+        }
+        
+        function setupResizeHandles(clip) {
+            const leftHandle = clip.querySelector('.clip-handle.left');
+            const rightHandle = clip.querySelector('.clip-handle.right');
+            
+            leftHandle.addEventListener('mousedown', (e) => {
+                e.stopPropagation();
+                startResize(clip, 'left', e);
+            });
+            
+            rightHandle.addEventListener('mousedown', (e) => {
+                e.stopPropagation();
+                startResize(clip, 'right', e);
+            });
+        }
+        
+        function startResize(clip, side, e) {
+            e.preventDefault();
+            
+            const startX = e.clientX;
+            const startWidth = clip.offsetWidth;
+            const startLeft = clip.offsetLeft;
+            const track = clip.parentElement;
+            const trackRect = track.getBoundingClientRect();
+            
+            let startTime = parseFloat(clip.dataset.start);
+            let duration = parseFloat(clip.dataset.duration);
+            
+            function doResize(e) {
+                const dx = e.clientX - startX;
+                const scale = timelineScale;
+                
+                if (side === 'right') {
+                    // Redimensionar por la derecha
+                    const newWidth = Math.max(20, startWidth + dx * scale);
+                    const newDuration = (newWidth / trackRect.width) * totalVideoTime;
+                    
+                    clip.style.width = `${(newDuration / totalVideoTime) * 100}%`;
+                    clip.dataset.duration = newDuration;
+                    clip.dataset.end = startTime + newDuration;
+                } else {
+                    // Redimensionar por la izquierda
+                    const newLeft = Math.max(0, startLeft + dx * scale);
+                    const newStart = (newLeft / trackRect.width) * totalVideoTime;
+                    const newDuration = duration - (newStart - startTime);
+                    
+                    if (newDuration > 0.5) { // Mínimo 0.5 segundos
+                        clip.style.left = `${(newStart / totalVideoTime) * 100}%`;
+                        clip.style.width = `${(newDuration / totalVideoTime) * 100}%`;
+                        clip.dataset.start = newStart;
+                        clip.dataset.duration = newDuration;
+                        clip.dataset.end = newStart + newDuration;
+                    }
+                }
+            }
+            
+            function stopResize() {
+                document.removeEventListener('mousemove', doResize);
+                document.removeEventListener('mouseup', stopResize);
+            }
+            
+            document.addEventListener('mousemove', doResize);
+            document.addEventListener('mouseup', stopResize);
+        }
+        
+        function setupDragEvents() {
+            document.querySelectorAll('.clip').forEach(clip => {
+                clip.addEventListener('mousedown', startDrag);
+            });
+            
+            // Permitir seleccionar la línea de tiempo haciendo clic en ella
+            document.querySelectorAll('.track-content').forEach(track => {
+                track.addEventListener('mousedown', (e) => {
+                    if (e.target === track) {
+                        if (selectedClip) {
+                            selectedClip.style.boxShadow = 'none';
+                            selectedClip = null;
+                        }
+                    }
+                });
+            });
+        }
+        
+        function startDrag(e) {
+            if (e.target.classList.contains('clip-handle')) return;
+            
+            const clip = this;
+            const track = clip.parentElement;
+            const trackRect = track.getBoundingClientRect();
+            
+            // Solo arrastrar si no estamos redimensionando
+            if (!e.target.classList.contains('clip-handle')) {
+                const startX = e.clientX;
+                const startLeft = clip.offsetLeft;
+                let startTime = parseFloat(clip.dataset.start);
+                
+                clip.style.zIndex = '10';
+                
+                function doDrag(e) {
+                    const dx = e.clientX - startX;
+                    const scale = timelineScale;
+                    const newLeft = Math.max(0, startLeft + dx * scale);
+                    const maxLeft = trackRect.width - clip.offsetWidth;
+                    
+                    if (newLeft >= 0 && newLeft <= maxLeft) {
+                        clip.style.left = `${(newLeft / trackRect.width) * 100}%`;
+                        
+                        // Actualizar tiempos
+                        const newStart = (newLeft / trackRect.width) * totalVideoTime;
+                        clip.dataset.start = newStart;
+                        clip.dataset.end = newStart + parseFloat(clip.dataset.duration);
+                    }
+                }
+                
+                function stopDrag() {
+                    document.removeEventListener('mousemove', doDrag);
+                    document.removeEventListener('mouseup', stopDrag);
+                    clip.style.zIndex = '';
+                }
+                
+                document.addEventListener('mousemove', doDrag);
+                document.addEventListener('mouseup', stopDrag);
+                
+                e.preventDefault();
+            }
+        }
+        
+        function addNewClip(type) {
+            let trackId, title, defaultDuration;
+            
+            switch (type) {
+                case 'video':
+                    trackId = 'video-track-1';
+                    title = 'Nuevo Video';
+                    defaultDuration = 5;
+                    break;
+                case 'audio':
+                    trackId = 'audio-track';
+                    title = 'Nuevo Audio';
+                    defaultDuration = 10;
+                    break;
+                case 'text':
+                    trackId = 'text-track';
+                    title = 'Nuevo Texto';
+                    defaultDuration = 3;
+                    break;
+            }
+            
+            // Posicionar el nuevo clip donde está el cabezal de reproducción
+            const currentTime = (currentVideoTime / totalVideoTime) * 100;
+            const startTime = currentVideoTime;
+            
+            createClip(trackId, title, type, startTime, defaultDuration);
+        }
+        
+        function deleteSelectedClip() {
+            if (selectedClip) {
+                selectedClip.remove();
+                selectedClip = null;
+            }
+        }
+        
+        function zoomTimeline(factor) {
+            timelineScale *= factor;
+            
+            // Ajustar el ancho de los tracks
+            document.querySelectorAll('.track-content').forEach(track => {
+                const currentWidth = track.scrollWidth;
+                track.style.width = `${currentWidth * factor}px`;
+            });
+        }
+        
+        function playVideo() {
+            if (!isPlaying) {
+                isPlaying = true;
+                videoPreview.play();
+                
+                playInterval = setInterval(() => {
+                    currentVideoTime += 0.1;
+                    
+                    if (currentVideoTime >= totalVideoTime) {
+                        currentVideoTime = 0;
+                    }
+                    
+                    updatePlayhead();
+                    updatePreviewTime();
+                    timelineScrubber.value = (currentVideoTime / totalVideoTime) * 100;
+                }, 100);
+            }
+        }
+        
+        function pauseVideo() {
+            if (isPlaying) {
+                isPlaying = false;
+                videoPreview.pause();
+                clearInterval(playInterval);
+            }
+        }
+        
+        function scrubTimeline() {
+            currentVideoTime = (timelineScrubber.value / 100) * totalVideoTime;
+            updatePlayhead();
+            updatePreviewTime();
+        }
+        
+        function updatePlayhead() {
+            const percentage = (currentVideoTime / totalVideoTime) * 100;
+            playhead.style.left = `${percentage}%`;
+        }
+        
+        function updatePreviewTime() {
+            const currentMinutes = Math.floor(currentVideoTime / 60);
+            const currentSeconds = Math.floor(currentVideoTime % 60);
+            const totalMinutes = Math.floor(totalVideoTime / 60);
+            const totalSeconds = Math.floor(totalVideoTime % 60);
+            
+            previewTime.textContent = 
+                `${String(currentMinutes).padStart(2, '0')}:${String(currentSeconds).padStart(2, '0')} / ` +
+                `${String(totalMinutes).padStart(2, '0')}:${String(totalSeconds).padStart(2, '0')}`;
+        }
+        
+        // Simular un video para la vista previa (en un caso real, se cargaría un archivo)
+        function simulateVideo() {
+            // Crear un canvas que simule un video
+            const canvas = document.createElement('canvas');
+            canvas.width = 640;
+            canvas.height = 360;
+            const ctx = canvas.getContext('2d');
+            
+            let frameCount = 0;
+            
+            function drawFrame() {
+                ctx.fillStyle = '#212529';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Dibujar algo que cambie con el tiempo
+                ctx.fillStyle = '#4dabf7';
+                ctx.font = '30px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`Simulación de video - Frame ${frameCount}`, canvas.width/2, canvas.height/2);
+                
+                frameCount++;
+                
+                // Convertir a blob y actualizar la fuente del video
+                canvas.toBlob((blob) => {
+                    if (videoPreview.src) {
+                        URL.revokeObjectURL(videoPreview.src);
+                    }
+                    videoPreview.src = URL.createObjectURL(blob);
+                }, 'video/webm');
+                
+                if (isPlaying) {
+                    requestAnimationFrame(drawFrame);
+                }
+            }
+            
+            videoPreview.addEventListener('play', () => {
+                drawFrame();
+            });
+        }
+        
+        // Iniciar la simulación del video
+        simulateVideo();
+    </script>
+</body>
+</html>

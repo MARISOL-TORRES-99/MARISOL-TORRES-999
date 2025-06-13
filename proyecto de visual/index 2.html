@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🎯 Red Hunt - Atrapa la Información Correcta</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #00ffff;
+      --secondary-color: #ff00ff;
+      --correct-color: #00ff88;
+      --wrong-color: #ff5555;
+      --bg-dark: #0a0a0a;
+      --bg-darker: #050505;
+      --text-light: #ffffff;
+      --text-muted: #aaaaaa;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, var(--bg-dark), var(--bg-darker));
+      color: var(--text-light);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      text-align: center;
+      padding: 30px 20px;
+      max-width: 900px;
+      margin: auto;
+      width: 100%;
+    }
+
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 3.5em;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+      text-shadow: 0 0 15px var(--primary-color);
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 10px var(--primary-color);
+      }
+      to {
+        text-shadow: 0 0 20px var(--secondary-color), 0 0 30px var(--primary-color);
+      }
+    }
+
+    .instructions, .start-screen {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 25px;
+      border-radius: 15px;
+      margin-bottom: 25px;
+      font-size: 1.15em;
+      border: 2px solid var(--primary-color);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+      backdrop-filter: blur(5px);
+      max-width: 800px;
+      margin: 0 auto 30px;
+    }
+
+    .instructions ul {
+      text-align: left;
+      margin-top: 15px;
+      padding-left: 25px;
+      line-height: 1.6;
+    }
+
+    .instructions li {
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .instructions li::before {
+      content: "•";
+      color: var(--primary-color);
+      font-weight: bold;
+      display: inline-block;
+      width: 1em;
+      margin-left: -1em;
+    }
+
+    .button {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: #000;
+      padding: 12px 30px;
+      margin: 15px 10px;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1.1em;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.8);
+    }
+
+    .button:hover::before {
+      opacity: 1;
+    }
+
+    .button:active {
+      transform: translateY(1px);
+    }
+
+    #gameArea {
+      width: 100%;
+      height: 500px;
+      position: relative;
+      overflow: hidden;
+      border: 3px solid var(--primary-color);
+      background: linear-gradient(to bottom, #111, #222);
+      margin: 30px 0;
+      border-radius: 15px;
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+      perspective: 1000px;
+    }
+
+    #player {
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle, var(--primary-color), rgba(0, 255, 255, 0.5));
+      border-radius: 50%;
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 0 30px var(--primary-color);
+      transition: transform 0.1s ease;
+      z-index: 10;
+    }
+
+    #player::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 50%;
+      box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.8);
+      pointer-events: none;
+    }
+
+    .falling {
+      width: 150px !important;
+      height: 50px;
+      position: absolute;
+      top: -60px;
+      text-align: center;
+      line-height: 50px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-family: 'Orbitron', sans-serif;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+      transition: top 0.05s linear, transform 0.2s ease;
+      color: #000;
+      z-index: 5;
+      transform-style: preserve-3d;
+      animation: float 3s ease-in-out infinite;
+      margin: 0;
+      padding: 0;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0) rotateX(0);
+      }
+      50% {
+        transform: translateY(-5px) rotateX(5deg);
+      }
+    }
+
+    .falling.correct {
+      background: linear-gradient(135deg, var(--correct-color), #00cc77);
+    }
+
+    .falling.wrong {
+      background: linear-gradient(135deg, var(--wrong-color), #cc0000);
+    }
+
+    .stats-container {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      border: 1px solid var(--primary-color);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+    }
+
+    .stat {
+      font-size: 1.3em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .stat-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.5em;
+      margin-top: 5px;
+      color: var(--primary-color);
+    }
+
+    .footer {
+      font-size: 0.9em;
+      color: var(--text-muted);
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    #resultMessage {
+      font-size: 1.8em;
+      margin: 25px 0;
+      color: var(--primary-color);
+      text-shadow: 0 0 10px var(--primary-color);
+      font-family: 'Orbitron', sans-serif;
+      min-height: 60px;
+    }
+
+    #restartButtons {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    #backButton {
+      background: linear-gradient(135deg, #ff7f50, #ff6347);
+      color: #fff;
+      padding: 12px 30px;
+      border-radius: 50px;
+      font-size: 1.1em;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(255, 99, 71, 0.5);
+      transition: all 0.3s ease;
+      border: none;
+    }
+
+    #backButton:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 25px rgba(255, 99, 71, 0.8);
+    }
+
+    .instructions-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .particle {
+      position: absolute;
+      background-color: var(--primary-color);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .power-up {
+      width: 40px;
+      height: 40px;
+      position: absolute;
+      background: radial-gradient(circle, #ffff00, #ffaa00);
+      border-radius: 50%;
+      box-shadow: 0 0 20px #ffff00;
+      animation: pulse 1.5s infinite alternate;
+      z-index: 8;
+    }
+
+    @keyframes pulse {
+      from { transform: scale(1); box-shadow: 0 0 10px #ffff00; }
+      to { transform: scale(1.1); box-shadow: 0 0 30px #ffff00; }
+    }
+
+    .scrollbar {
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary-color) var(--bg-dark);
+    }
+
+    .scrollbar::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .scrollbar::-webkit-scrollbar-track {
+      background: var(--bg-dark);
+    }
+
+    .scrollbar::-webkit-scrollbar-thumb {
+      background: var(--primary-color);
+      border-radius: 10px;
+    }
+
+    .scrollbar::-webkit-scrollbar-thumb:hover {
+      background: var(--secondary-color);
+    }
+
+    /* Efectos de confeti */
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: var(--primary-color);
+      opacity: 0;
+      z-index: 100;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.5em;
+      }
+
+      #gameArea {
+        height: 400px;
+      }
+
+      .stats-container {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      #restartButtons {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .button, #backButton {
+        width: 100%;
+        max-width: 250px;
+      }
+    }
+  </style>
+</head>
+<body class="scrollbar">
+  <div class="container">
+    <!-- Pantalla de inicio -->
+    <div class="start-screen">
+      <h1>🎯 RED HUNT</h1>
+      <p>Atrapa los conceptos correctos sobre Internet y evita los errores comunes.</p>
+      <div class="button-container">
+        <button class="button" onclick="startGame()">🎮 INICIAR JUEGO</button>
+        <button class="button" onclick="showInstructions()">📚 INSTRUCCIONES</button>
+      </div>
+    </div>
+
+    <!-- Instrucciones -->
+    <div class="instructions-container instructions" style="display: none;">
+      <p><strong>🕹️ CÓMO JUGAR:</strong></p>
+      <ul>
+        <li>🧠 Usa las teclas <strong>IZQUIERDA</strong> y <strong>DERECHA</strong> para mover tu nave.</li>
+        <li>✅ Atrapa los términos <strong style="color: var(--correct-color);">CORRECTOS</strong> sobre Internet (+10 puntos).</li>
+        <li>❌ Evita los conceptos <strong style="color: var(--wrong-color);">ERRÓNEOS</strong> (pierdes 1 vida).</li>
+        <li>⭐ Atrapa los <strong style="color: #ffcc00;">POWER-UPS</strong> para beneficios especiales.</li>
+        <li>⏱️ Tienes <strong>60 segundos</strong> para lograr el máximo puntaje.</li>
+        <li>💀 Pierdes si te quedas sin <strong>VIDAS</strong>.</li>
+      </ul>
+      <button class="button" onclick="hideInstructions()">📝 CERRAR INSTRUCCIONES</button>
+    </div>
+
+    <!-- Estadísticas del juego -->
+    <div class="stats-container">
+      <div class="stat">
+        <span>PUNTAJE</span>
+        <span class="stat-value" id="score">0</span>
+      </div>
+      <div class="stat">
+        <span>VIDAS</span>
+        <span class="stat-value" id="lives">3</span>
+      </div>
+      <div class="stat">
+        <span>TIEMPO</span>
+        <span class="stat-value" id="time">60</span>
+      </div>
+    </div>
+
+    <!-- Área del juego -->
+    <div id="gameArea">
+      <div id="player"></div>
+    </div>
+
+    <div id="resultMessage"></div>
+
+    <!-- Botones de reinicio -->
+    <div id="restartButtons" style="display: none;">
+      <button class="button" onclick="startGame()">🔁 VOLVER A JUGAR</button>
+      <button id="backButton" onclick="window.location.href='index.html'">↩️ VOLVER AL INICIO</button>
+    </div>
+
+    <p class="footer">Desarrollado con 💻 HTML, CSS y JavaScript | Proyecto educativo sobre conceptos de Internet</p>
+  </div>
+
+  <script>
+    // Elementos del DOM
+    const player = document.getElementById("player");
+    const gameArea = document.getElementById("gameArea");
+    const scoreDisplay = document.getElementById("score");
+    const livesDisplay = document.getElementById("lives");
+    const timeDisplay = document.getElementById("time");
+    const resultMessage = document.getElementById("resultMessage");
+    const restartButtons = document.getElementById("restartButtons");
+    const startScreen = document.querySelector(".start-screen");
+    const instructionsDiv = document.querySelector(".instructions");
+    
+    // Variables del juego
+    let gameInterval, timerInterval, powerUpInterval;
+    let score = 0, lives = 3, timeLeft = 60;
+    let gameRunning = false;
+    let playerSpeed = 20;
+    let powerUpActive = false;
+    let powerUpEndTime = 0;
+    let activeObjects = [];
+
+    // Items del juego
+    const correctItems = [
+      { label: "HTTP", info: "Protocolo de transferencia de hipertexto" },
+      { label: "WWW", info: "World Wide Web - Red global de documentos" },
+      { label: "IP", info: "Dirección única de un dispositivo en una red" },
+      { label: "DNS", info: "Sistema de nombres de dominio" },
+      { label: "HTML", info: "Lenguaje de marcado para páginas web" },
+      { label: "URL", info: "Localizador uniforme de recursos" },
+      { label: "SSL", info: "Capa de sockets seguros para encriptación" }
+    ];
+
+    const wrongItems = [
+      { label: "Internet = Web", info: "Error: Web es solo una parte de Internet" },
+      { label: "Google es Internet", info: "Error: Google es un servicio en Internet" },
+      { label: "Navegador = Internet", info: "Error: El navegador solo accede a Internet" },
+      { label: "WiFi = Internet", info: "Error: WiFi es solo un método de conexión" },
+      { label: "5G = Internet", info: "Error: 5G es una tecnología de red móvil" },
+      { label: "HTTP es inseguro", info: "Parcialmente: HTTP no encripta, pero no es inseguro por sí solo" }
+    ];
+
+    // Función para verificar posición válida
+    function isPositionValid(newLeft, newWidth) {
+      // Margen mínimo entre objetos
+      const margin = 20;
+      
+      // Verificar colisión con los bordes
+      if (newLeft < 0 || newLeft + newWidth > gameArea.offsetWidth) {
+        return false;
+      }
+
+      // Verificar colisión con otros objetos
+      for (const obj of activeObjects) {
+        const objLeft = obj.left - margin;
+        const objRight = obj.left + obj.width + margin;
+        const newRight = newLeft + newWidth;
+
+        // Comprobar si hay solapamiento
+        if (!(newRight < objLeft || newLeft > objRight)) {
+          return false; // Hay colisión
+        }
+      }
+
+      return true; // Posición válida
+    }
+
+    // Función para eliminar objeto
+    function removeObject(objData) {
+      clearInterval(objData.interval);
+      if (objData.element && objData.element.parentNode) {
+        objData.element.remove();
+      }
+      // Eliminar de la lista de objetos activos
+      activeObjects = activeObjects.filter(obj => obj !== objData);
+    }
+
+    // Event listeners
+    document.addEventListener("keydown", movePlayer);
+    document.addEventListener("keyup", resetPlayerPosition);
+
+    // Funciones del juego
+    function movePlayer(e) {
+      if (!gameRunning) return;
+      
+      const left = parseInt(window.getComputedStyle(player).getPropertyValue("left")) || 0;
+      
+      if (e.key === "ArrowLeft" && left > 0) {
+        player.style.left = (left - playerSpeed) + "px";
+        player.style.transform = `translateX(-50%) rotate(${-15}deg)`;
+      }
+      if (e.key === "ArrowRight" && left < gameArea.offsetWidth - 100) {
+        player.style.left = (left + playerSpeed) + "px";
+        player.style.transform = `translateX(-50%) rotate(${15}deg)`;
+      }
+    }
+
+    function resetPlayerPosition() {
+      player.style.transform = "translateX(-50%) rotate(0deg)";
+    }
+
+    function createFallingObject() {
+      if (!gameRunning) return;
+      
+      const obj = document.createElement("div");
+      const isCorrect = Math.random() > 0.4; // 60% correctos, 40% incorrectos
+      const items = isCorrect ? correctItems : wrongItems;
+      const item = items[Math.floor(Math.random() * items.length)];
+      
+      obj.textContent = item.label;
+      obj.classList.add("falling");
+      obj.classList.add(isCorrect ? "correct" : "wrong");
+      obj.dataset.correct = isCorrect;
+      obj.dataset.info = item.info;
+      
+      const objWidth = 150; // Ancho fijo
+      let leftPosition;
+      let attempts = 0;
+      const maxAttempts = 20;
+
+      // Intentar encontrar una posición válida
+      do {
+        leftPosition = Math.random() * (gameArea.offsetWidth - objWidth);
+        attempts++;
+        if (attempts >= maxAttempts) {
+          // Si no se encuentra posición válida después de varios intentos, salir
+          return;
+        }
+      } while (!isPositionValid(leftPosition, objWidth));
+      
+      obj.style.left = leftPosition + "px";
+      
+      gameArea.appendChild(obj);
+
+      // Registrar el objeto como activo
+      const objData = {
+        element: obj,
+        left: leftPosition,
+        width: objWidth,
+        interval: null
+      };
+      activeObjects.push(objData);
+
+      let fallSpeed = 3 + Math.random() * 2; // Velocidad aleatoria
+      let rotation = (Math.random() - 0.5) * 20; // Rotación aleatoria
+      
+      objData.interval = setInterval(() => {
+        if (!gameRunning) {
+          removeObject(objData);
+          return;
+        }
+
+        let top = parseInt(window.getComputedStyle(obj).getPropertyValue("top")) || 0;
+        if (top >= gameArea.offsetHeight - 60) {
+          // Objeto llegó al fondo
+          if (isCorrect) {
+            // Perdiste puntos por no atrapar un objeto correcto
+            if (!powerUpActive) {
+              score = Math.max(0, score - 5);
+              scoreDisplay.textContent = score;
+              createParticles(obj, "#ff0000");
+            }
+          }
+          
+          removeObject(objData);
+        } else {
+          // Mover el objeto hacia abajo
+          obj.style.top = top + fallSpeed + "px";
+          obj.style.transform = `rotate(${rotation}deg)`;
+          rotation += 0.5;
+          
+          // Detectar colisión con el jugador
+          if (checkCollision(player, obj)) {
+            handleCollision(obj, isCorrect);
+            removeObject(objData);
+          }
+        }
+      }, 20);
+    }
+
+    function createPowerUp() {
+      if (!gameRunning || powerUpActive) return;
+      
+      const powerUp = document.createElement("div");
+      powerUp.classList.add("power-up");
+      powerUp.style.left = Math.random() * (gameArea.offsetWidth - 40) + "px";
+      powerUp.style.top = "-40px";
+      gameArea.appendChild(powerUp);
+
+      let fallSpeed = 4;
+      let powerUpInterval = setInterval(() => {
+        if (!gameRunning) {
+          powerUp.remove();
+          clearInterval(powerUpInterval);
+          return;
+        }
+
+        let top = parseInt(window.getComputedStyle(powerUp).getPropertyValue("top")) || 0;
+        if (top >= gameArea.offsetHeight - 40) {
+          powerUp.remove();
+          clearInterval(powerUpInterval);
+        } else {
+          powerUp.style.top = top + fallSpeed + "px";
+          
+          // Detectar colisión con el jugador
+          if (checkCollision(player, powerUp)) {
+            activatePowerUp();
+            powerUp.remove();
+            clearInterval(powerUpInterval);
+          }
+        }
+      }, 20);
+    }
+
+    function activatePowerUp() {
+      if (powerUpActive) return;
+      
+      powerUpActive = true;
+      powerUpEndTime = Date.now() + 10000; // 10 segundos de power-up
+      
+      // Efecto visual
+      player.style.boxShadow = "0 0 30px #ffff00";
+      player.style.background = "radial-gradient(circle, #ffff00, #ffaa00)";
+      
+      // Beneficios del power-up
+      playerSpeed = 30; // Mayor velocidad
+      
+      // Mostrar mensaje
+      showTemporaryMessage("¡POWER-UP ACTIVADO! +10s", "#ffcc00");
+      
+      // Crear partículas de celebración
+      createParticles(player, "#ffff00", 30);
+      
+      // Añadir tiempo extra
+      timeLeft += 10;
+      timeDisplay.textContent = timeLeft;
+      
+      // Temporizador para desactivar el power-up
+      setTimeout(() => {
+        if (gameRunning) {
+          powerUpActive = false;
+          player.style.boxShadow = "0 0 30px var(--primary-color)";
+          player.style.background = "radial-gradient(circle, var(--primary-color), rgba(0, 255, 255, 0.5))";
+          playerSpeed = 20;
+          showTemporaryMessage("Power-up terminado", "#ffffff");
+        }
+      }, 10000);
+    }
+
+    function checkCollision(player, element) {
+      const playerRect = player.getBoundingClientRect();
+      const elementRect = element.getBoundingClientRect();
+      
+      return !(
+        playerRect.right < elementRect.left || 
+        playerRect.left > elementRect.right || 
+        playerRect.bottom < elementRect.top || 
+        playerRect.top > elementRect.bottom
+      );
+    }
+
+    function handleCollision(obj, isCorrect) {
+      if (isCorrect) {
+        // Objeto correcto
+        score += 10;
+        scoreDisplay.textContent = score;
+        createParticles(obj, "#00ff88");
+        showTemporaryMessage("+10 puntos", "#00ff88");
+      } else {
+        // Objeto incorrecto
+        if (!powerUpActive) {
+          lives -= 1;
+          livesDisplay.textContent = lives;
+          createParticles(obj, "#ff5555");
+          showTemporaryMessage("¡Error! -1 vida", "#ff5555");
+          
+          if (lives <= 0) {
+            endGame();
+          }
+        } else {
+          showTemporaryMessage("Power-up protegió", "#ffff00");
+        }
+      }
+    }
+
+    function createParticles(element, color, count = 15) {
+      const rect = element.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      
+      for (let i = 0; i < count; i++) {
+        const particle = document.createElement("div");
+        particle.classList.add("particle");
+        particle.style.backgroundColor = color;
+        particle.style.width = `${5 + Math.random() * 10}px`;
+        particle.style.height = particle.style.width;
+        particle.style.left = `${centerX}px`;
+        particle.style.top = `${centerY}px`;
+        
+        document.body.appendChild(particle);
+        
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = 2 + Math.random() * 3;
+        const lifetime = 500 + Math.random() * 1000;
+        
+        let posX = centerX;
+        let posY = centerY;
+        let opacity = 1;
+        let size = parseFloat(particle.style.width);
+        
+        const animate = () => {
+          posX += Math.cos(angle) * velocity;
+          posY += Math.sin(angle) * velocity;
+          opacity -= 0.02;
+          size *= 0.98;
+          
+          particle.style.left = `${posX}px`;
+          particle.style.top = `${posY}px`;
+          particle.style.opacity = opacity;
+          particle.style.width = `${size}px`;
+          particle.style.height = `${size}px`;
+          
+          if (opacity <= 0) {
+            particle.remove();
+            return;
+          }
+          
+          requestAnimationFrame(animate);
+        };
+        
+        requestAnimationFrame(animate);
+      }
+    }
+
+    function showTemporaryMessage(text, color) {
+      const msg = document.createElement("div");
+      msg.textContent = text;
+      msg.style.position = "absolute";
+      msg.style.color = color;
+      msg.style.fontWeight = "bold";
+      msg.style.fontSize = "1.2em";
+      msg.style.textShadow = `0 0 5px ${color}`;
+      msg.style.left = "50%";
+      msg.style.top = "40%";
+      msg.style.transform = "translate(-50%, -50%)";
+      msg.style.opacity = "1";
+      msg.style.transition = "all 1s ease-out";
+      msg.style.zIndex = "100";
+      
+      gameArea.appendChild(msg);
+      
+      setTimeout(() => {
+        msg.style.opacity = "0";
+        msg.style.top = "35%";
+      }, 300);
+      
+      setTimeout(() => {
+        msg.remove();
+      }, 1300);
+    }
+
+    function startGame() {
+      // Resetear variables del juego
+      score = 0;
+      lives = 3;
+      timeLeft = 60;
+      gameRunning = true;
+      powerUpActive = false;
+      activeObjects = [];
+      
+      // Actualizar displays
+      scoreDisplay.textContent = score;
+      livesDisplay.textContent = lives;
+      timeDisplay.textContent = timeLeft;
+      resultMessage.textContent = "";
+      
+      // Mostrar/ocultar elementos
+      restartButtons.style.display = "none";
+      startScreen.style.display = "none";
+      instructionsDiv.style.display = "none";
+      player.style.left = "50%";
+      
+      // Limpiar intervalos anteriores
+      clearInterval(gameInterval);
+      clearInterval(timerInterval);
+      clearInterval(powerUpInterval);
+      
+      // Eliminar objetos antiguos
+      document.querySelectorAll(".falling, .power-up").forEach(el => el.remove());
+      
+      // Iniciar intervalos del juego
+      gameInterval = setInterval(createFallingObject, 800);
+      timerInterval = setInterval(updateTime, 1000);
+      powerUpInterval = setInterval(createPowerUp, 15000); // Power-up cada 15 segundos
+      
+      // Efecto de inicio
+      createParticles(player, "#00ffff", 50);
+      showTemporaryMessage("¡COMENZÓ EL JUEGO!", "#00ffff");
+    }
+
+    function endGame() {
+      gameRunning = false;
+      clearInterval(gameInterval);
+      clearInterval(timerInterval);
+      clearInterval(powerUpInterval);
+      
+      // Mostrar mensaje final
+      let message = "";
+      if (score >= 200) {
+        message = "¡INCREÍBLE! 🏆 Puntaje perfecto";
+      } else if (score >= 150) {
+        message = "¡EXCELENTE! 🌟 Dominas los conceptos";
+      } else if (score >= 100) {
+        message = "¡BUEN TRABAJO! 👍 Sigue practicando";
+      } else {
+        message = "¡INTÉNTALO DE NUEVO! 💪 Puedes mejorar";
+      }
+      
+      resultMessage.textContent = `${message} | Puntaje final: ${score}`;
+      restartButtons.style.display = "flex";
+      
+      // Efecto de fin de juego
+      createParticles(player, score >= 100 ? "#00ff88" : "#ff5555", 100);
+    }
+
+    function updateTime() {
+      timeLeft--;
+      timeDisplay.textContent = timeLeft;
+      
+      // Cambiar color cuando el tiempo es crítico
+      if (timeLeft <= 10) {
+        timeDisplay.style.color = "#ff5555";
+        timeDisplay.style.animation = "pulse 0.5s infinite alternate";
+      } else {
+        timeDisplay.style.color = "var(--primary-color)";
+        timeDisplay.style.animation = "none";
+      }
+      
+      if (timeLeft <= 0) endGame();
+    }
+
+    function showInstructions() {
+      startScreen.style.display = "none";
+      instructionsDiv.style.display = "block";
+    }
+
+    function hideInstructions() {
+      instructionsDiv.style.display = "none";
+      startScreen.style.display = "block";
+    }
+
+    // Efecto de confeti para el título
+    function createTitleConfetti() {
+      const title = document.querySelector("h1");
+      const rect = title.getBoundingClientRect();
+      
+      for (let i = 0; i < 30; i++) {
+        const confetti = document.createElement("div");
+        confetti.classList.add("confetti");
+        confetti.style.left = `${rect.left + Math.random() * rect.width}px`;
+        confetti.style.top = `${rect.top + Math.random() * rect.height}px`;
+        confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+        confetti.style.width = `${5 + Math.random() * 10}px`;
+        confetti.style.height = `${5 + Math.random() * 10}px`;
+        
+        document.body.appendChild(confetti);
+        
+        // Animación
+        setTimeout(() => {
+          confetti.style.opacity = "1";
+          confetti.style.transform = `translate(${(Math.random() - 0.5) * 200}px, ${(Math.random() - 0.5) * 200}px) rotate(${Math.random() * 360}deg)`;
+          confetti.style.transition = `all ${1 + Math.random() * 2}s ease-out`;
+          
+          setTimeout(() => {
+            confetti.style.opacity = "0";
+            setTimeout(() => confetti.remove(), 1000);
+          }, 1000);
+        }, i * 100);
+      }
+    }
+
+    // Iniciar efectos al cargar
+    window.addEventListener("load", () => {
+      setTimeout(createTitleConfetti, 1000);
+      setTimeout(createTitleConfetti, 3000);
+    });
+  </script>
+</body>
+</html>
